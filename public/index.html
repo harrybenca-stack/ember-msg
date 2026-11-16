@@ -678,10 +678,22 @@ async function startCall(media) {
   $('callName').textContent = callPeer.username;
   $('acceptBtn').classList.add('hidden');
   showCall(media === 'video' ? 'Calling (video)…' : 'Calling…');
-  await setupPc(true);
-  const offer = await pc.createOffer();
-  await pc.setLocalDescription(offer);
-  await post('/api/signal', { to: callPeer.id, kind: 'offer', callId, media, payload: offer }).catch(() => {});
+  try {
+    await setupPc(true);
+    const offer = await pc.createOffer();
+    await pc.setLocalDescription(offer);
+    await post('/api/signal', { to: callPeer.id, kind: 'offer', callId, media, payload: offer }).catch(() => {});
+  } catch (e) {
+    // Mic/camera unavailable (permission denied, no device): setupPc threw
+    // before any offer went out, so there is no call to record — never route
+    // this through endCall(), which would write a bogus "missed" card.
+    // cleanupCall() tolerates the half-built pc / missing localStream, and
+    // hideCall() inside it is undone by showCall() so the reason stays visible
+    // (the end button then just dismisses: endCall() no-ops with no peer).
+    cleanupCall();
+    showCall('Microphone unavailable — check permission and try again');
+    return;
+  }
   const myCallId = callId;
   noAnswerTimer = setTimeout(() => { if (pc && callId === myCallId && !callConnected) endCall(true); }, 60000); // no answer -> missed
 }
