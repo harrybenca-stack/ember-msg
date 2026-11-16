@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Messenger</title>
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#ffffff">
+<link rel="icon" href="/icon.png">
+<style>
+:root{--blue:#229FD9;--blue-dark:#1B86B8;--tint:#E1F1FA;--bg:#ffffff;--chatbg:#F7FAFC;--panel:#F2F7FA;--line:#E4EDF2;--txt:#16222B;--muted:#7B8B96;--tick:#8AA5B5;--navy:#0F1B24;--red:#E5484D;--shadow:0 1px 2px rgba(20,60,90,.08);
+/* chat doodle tiles: Roliett whisper pattern, our motifs (dove, smoke cloud, fire, envelope,
+   paper plane, chat bubble, phone, heart, star, moon) — sources: bg-doodle-light.svg / bg-doodle-night.svg */
+--chatbg-img:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%27400%27%20height%3D%27400%27%20viewBox%3D%270%200%20400%20400%27%3E%3Cdefs%3E%3Cpath%20id%3D%27m0%27%20d%3D%27M15.1%208.9Q17.1%2011.3%2019.7%2012.9Q23.5%2015%2027%2015.8V12.9Q23.7%208.6%2023.3%202.5Q23.2%200.8%2021.6%200.2Q20.4%20-0%2019.6%200.7Q17.5%202.9%2015.1%208.9ZM30%2013.4V16.3V13.4V16.3Q30%2016.3%2030%2016.3Q30%2016.3%2030%2016.3V16.4Q30%2016.4%2030%2016.4Q30%2016.4%2030%2016.4V19.4Q27%2019.2%2022.9%2017.7Q18.7%2016.3%2014.9%2013.1Q11.2%209.9%209.5%204.6Q8.9%202.9%207.2%202.9Q6%202.9%205.4%203.9Q4.6%205.5%203.9%208.7Q3.1%2011.9%203%2016.4Q3.1%2021.8%205.1%2025.7Q7%2029.6%209.7%2031.9Q12.2%2034.3%2014.1%2035.4L1.1%2038.9Q0.4%2039.1%200.1%2039.9Q-0.2%2040.6%200.3%2041.3Q1.6%2043.2%205.4%2045.4Q9.2%2047.7%2015%2047.8Q15.6%2047.8%2015.9%2047.6L23.1%2041.8H30Q36.4%2041.7%2040.6%2037.4Q44.8%2033.2%2045%2026.9V11.9L47.8%207.6Q48%207.4%2048%207Q47.9%205.9%2046.9%205.9H37.5Q34.3%205.9%2032.2%208Q30.1%2010.2%2030%2013.4ZM37.5%2011.9Q38.9%2011.9%2039%2013.4Q38.9%2014.8%2037.5%2014.9Q36.1%2014.8%2036%2013.4Q36.1%2011.9%2037.5%2011.9Z%27%2F%3E%3Cpath%20id%3D%27m1%27%20d%3D%27M0%2030Q0.1%2034.6%203.1%2037.6Q6.2%2040.6%2010.8%2040.8H38.4Q42.4%2040.7%2045.2%2038Q47.9%2035.2%2048%2031.2Q47.9%2027.7%2045.8%2025.1Q43.6%2022.5%2040.4%2021.8Q40.8%2020.6%2040.8%2019.2Q40.7%2016.1%2038.7%2014.1Q36.7%2012.1%2033.6%2012Q31.3%2012%2029.6%2013.2Q28%2010.5%2025.3%208.9Q22.6%207.3%2019.2%207.2Q14.1%207.4%2010.7%2010.7Q7.3%2014.1%207.2%2019.2Q7.2%2019.5%207.2%2019.8Q7.2%2019.8%207.2%2019.8Q4%2021%202%2023.7Q0.1%2026.4%200%2030Z%27%2F%3E%3Cpath%20id%3D%27m2%27%20d%3D%27M17.9%200.5Q19.2%20-0.5%2020.5%200.6Q24.4%204.1%2027.8%208.5Q29.3%206.3%2031.3%204.4Q32.6%203.3%2033.9%204.4Q36.4%206.8%2038.3%209.7Q40.4%2012.5%2041.8%2015.5Q43.3%2018.4%2044.1%2021.1Q45%2023.8%2045%2026Q44.9%2032%2042.2%2036.9Q39.4%2041.9%2034.6%2044.9Q29.9%2047.9%2024%2048Q18.1%2047.9%2013.3%2044.9Q8.6%2041.9%205.8%2036.9Q3.1%2032%203%2026Q3.2%2020.4%207.2%2013.6Q11.3%206.8%2017.9%200.5ZM24.2%2039Q27.7%2039%2030.7%2037Q33.6%2034.9%2034.3%2031.3Q35%2027.9%2033.3%2024.5Q32.3%2023.2%2031.1%2024.3L28.8%2027Q27.6%2028%2026.4%2026.9Q25.2%2025.4%2023.5%2023.3Q21.8%2021.1%2020.5%2019.5Q19.4%2018.4%2018.3%2019.4Q15.8%2022.4%2014.7%2024.6Q13.5%2026.7%2013.5%2028.8Q13.6%2033.7%2016.6%2036.3Q19.6%2039%2024.2%2039Z%27%2F%3E%3Cpath%20id%3D%27m3%27%20d%3D%27M4.5%206Q2.6%206.1%201.3%207.3Q0.1%208.6%200%2010.5Q0.1%2012.8%201.8%2014.1L22.2%2029.4Q24%2030.6%2025.8%2029.4L46.2%2014.1Q47.9%2012.8%2048%2010.5Q47.9%208.6%2046.7%207.3Q45.4%206.1%2043.5%206H4.5ZM0%2016.5V36V16.5V36Q0.1%2038.5%201.8%2040.2Q3.5%2041.9%206%2042H42Q44.5%2041.9%2046.2%2040.2Q47.9%2038.5%2048%2036V16.5L27.6%2031.8Q26%2033%2024%2033Q22%2033%2020.4%2031.8L0%2016.5Z%27%2F%3E%3Cpath%20id%3D%27m4%27%20d%3D%27M46.7%200.6Q48.2%201.6%2048%203.5L42%2042.5Q41.7%2043.9%2040.5%2044.6Q39.2%2045.3%2037.9%2044.7L26.6%2040.1L20.2%2047Q18.7%2048.4%2016.9%2047.8Q15.1%2046.9%2015%2045V37.1Q15%2036.5%2015.4%2036.2L31.1%2019Q31.9%2018%2031%2017Q30.1%2016.1%2029%2016.9L9.9%2033.8L1.7%2029.7Q0.1%2028.9%200%2027.1Q0%2025.3%201.5%2024.4L43.5%200.4Q45.2%20-0.5%2046.7%200.6Z%27%2F%3E%3Cpath%20id%3D%27m5%27%20d%3D%27M48%2022.5Q47.9%2027.9%2044.7%2032.3Q41.5%2036.8%2036.1%2039.4Q30.8%2041.9%2024%2042Q18.8%2042%2014.2%2040.3Q12.5%2041.6%209.2%2043.2Q5.6%2044.8%201.5%2045Q0.6%2045%200.1%2044.1Q-0.2%2043.1%200.5%2042.5Q0.5%2042.5%200.5%2042.5Q0.5%2042.5%200.5%2042.5Q0.5%2042.5%200.5%2042.5Q0.5%2042.5%200.5%2042.5Q0.5%2042.5%200.5%2042.5Q0.5%2042.5%200.5%2042.5Q0.5%2042.5%200.5%2042.5Q0.5%2042.5%200.5%2042.5V42.4Q0.5%2042.4%200.5%2042.4Q0.5%2042.4%200.6%2042.3Q0.8%2042.1%201%2041.7Q1.7%2041.1%202.4%2039.8Q4%2037.3%204.5%2033.8Q0.1%2029%200%2022.5Q0.1%2017.1%203.3%2012.7Q6.5%208.2%2011.9%205.6Q17.2%203.1%2024%203Q30.8%203.1%2036.1%205.6Q41.5%208.2%2044.7%2012.7Q47.9%2017.1%2048%2022.5Z%27%2F%3E%3Cpath%20id%3D%27m6%27%20d%3D%27M15.5%202.3Q14.9%200.9%2013.7%200.4Q12.4%20-0.2%2011%200.1L2.7%202.3Q0.2%203.3%200%206Q0.1%2017.7%205.7%2027.2Q11.3%2036.7%2020.8%2042.3Q30.3%2047.9%2042%2048Q44.7%2047.8%2045.7%2045.3L47.9%2037Q48.2%2035.6%2047.6%2034.3Q47.1%2033.1%2045.7%2032.5L36.7%2028.8Q34.1%2027.9%2032.3%2029.9L28.6%2034.5Q23.6%2032.2%2019.7%2028.3Q15.8%2024.4%2013.5%2019.4L18.1%2015.7Q20.1%2013.9%2019.2%2011.3L15.5%202.3Z%27%2F%3E%3Cpath%20id%3D%27m7%27%20d%3D%27M4.5%2027.6%2021.4%2043.5%204.5%2027.6%2021.4%2043.5Q22.5%2044.5%2024%2044.5Q25.5%2044.5%2026.6%2043.5L43.5%2027.6Q47.9%2023.5%2048%2017.4V16.9Q47.9%2011.8%2044.8%208.2Q41.7%204.6%2036.8%203.6Q33.6%203.2%2030.5%204.1Q27.5%205%2025.1%207.4L24%208.5L22.9%207.4Q20.5%205%2017.5%204.1Q14.4%203.2%2011.2%203.6Q6.3%204.6%203.2%208.2Q0.1%2011.8%200%2016.9V17.4Q0.1%2023.5%204.5%2027.6Z%27%2F%3E%3Cpath%20id%3D%27m8%27%20d%3D%27M26.6%202.4Q25.8%200.8%2024%200.7Q22.2%200.8%2021.3%202.4L15.5%2014.4L2.4%2016.4Q0.7%2016.6%200.2%2018.3Q-0.4%2020%200.9%2021.3L10.3%2030.6L8.1%2043.9Q7.9%2045.6%209.3%2046.7Q10.7%2047.7%2012.3%2046.9L24%2040.7L35.7%2046.9Q37.2%2047.7%2038.7%2046.7Q40.1%2045.6%2039.9%2043.9L37.7%2030.6L47.1%2021.3Q48.3%2020%2047.9%2018.3Q47.2%2016.6%2045.5%2016.4L32.4%2014.4L26.6%202.4Z%27%2F%3E%3Cpath%20id%3D%27m9%27%20d%3D%27M27.4%200Q20.7%200.1%2015.3%203.3Q9.9%206.4%206.6%2011.9Q3.5%2017.2%203.4%2024Q3.5%2030.8%206.8%2036.1Q9.9%2041.6%2015.3%2044.7Q20.7%2047.9%2027.4%2048Q37.4%2047.8%2044%2041.2Q44.9%2040.3%2044.4%2039.2Q43.8%2038.1%2042.5%2038.2Q41%2038.6%2039.3%2038.6Q31.4%2038.4%2026%2033Q20.8%2027.8%2020.6%2019.7Q20.6%2014.4%2023.1%2010.1Q25.8%205.8%2030.1%203.3Q31.2%202.7%2031%201.4Q30.6%200.3%2029.4%200.1Q28.4%200%2027.3%200Z%27%2F%3E%3C%2Fdefs%3E%3Cg%20fill%3D%27%23229FD9%27%20fill-opacity%3D%270.1%27%3E%3Cuse%20href%3D%27%23m0%27%20transform%3D%27translate%2859%2044%29%20rotate%28-4%29%20scale%280.771%29%20translate%28-24%20-24%29%27%2F%3E%3Cuse%20href%3D%27%23m8%27%20transform%3D%27translate%28338%2054%29%20rotate%28-16%29%20scale%280.896%29%20translate%28-24%20-24%29%27%2F%3E%3Cuse%20href%3D%27%23m0%27%20transform%3D%27translate%28253%20142%29%20rotate%28-4%29%20scale%280.896%29%20translate%28-24%20-24%29%27%2F%3E%3Cuse%20href%3D%27%23m4%27%20transform%3D%27translate%28361%20163%29%20rotate%28-8%29%20scale%280.625%29%20translate%28-24%20-24%29%27%2F%3E%3Cuse%20href%3D%27%23m5%27%20transform%3D%27translate%2844%20240%29%20rotate%283%29%20scale%280.750%29%20translate%28-24%20-24%29%27%2F%3E%3Cuse%20href%3D%27%23m5%27%20transform%3D%27translate%28263%20247%29%20rotate%28-16%29%20scale%280.792%29%20translate%28-24%20-24%29%27%2F%3E%3Cuse%20href%3D%27%23m8%27%20transform%3D%27translate%28339%20248%29%20rotate%2817%29%20scale%280.667%29%20translate%28-24%20-24%29%27%2F%3E%3Cuse%20href%3D%27%23m9%27%20transform%3D%27translate%2864%20363%29%20rotate%2818%29%20scale%280.854%29%20translate%28-24%20-24%29%27%2F%3E%3Cuse%20href%3D%27%23m4%27%20transform%3D%27translate%28338%20363%29%20rotate%28-12%29%20scale%280.771%29%20translate%28-24%20-24%29%27%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+--chatbg-img-night:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%27400%27%20height%3D%27400%27%20viewBox%3D%270%200%20400%20400%27%3E%3Cdefs%3E%3Cpath%20id%3D%27m0%27%20d%3D%27M15.1%208.9Q17.1%2011.3%2019.7%2012.9Q23.5%2015%2027%2015.8V12.9Q23.7%208.6%2023.3%202.5Q23.2%200.8%2021.6%200.2Q20.4%20-0%2019.6%200.7Q17.5%202.9%2015.1%208.9ZM30%2013.4V16.3V13.4V16.3Q30%2016.3%2030%2016.3Q30%2016.3%2030%2016.3V16.4Q30%2016.4%2030%2016.4Q30%2016.4%2030%2016.4V19.4Q27%2019.2%2022.9%2017.7Q18.7%2016.3%2014.9%2013.1Q11.2%209.9%209.5%204.6Q8.9%202.9%207.2%202.9Q6%202.9%205.4%203.9Q4.6%205.5%203.9%208.7Q3.1%2011.9%203%2016.4Q3.1%2021.8%205.1%2025.7Q7%2029.6%209.7%2031.9Q12.2%2034.3%2014.1%2035.4L1.1%2038.9Q0.4%2039.1%200.1%2039.9Q-0.2%2040.6%200.3%2041.3Q1.6%2043.2%205.4%2045.4Q9.2%2047.7%2015%2047.8Q15.6%2047.8%2015.9%2047.6L23.1%2041.8H30Q36.4%2041.7%2040.6%2037.4Q44.8%2033.2%2045%2026.9V11.9L47.8%207.6Q48%207.4%2048%207Q47.9%205.9%2046.9%205.9H37.5Q34.3%205.9%2032.2%208Q30.1%2010.2%2030%2013.4ZM37.5%2011.9Q38.9%2011.9%2039%2013.4Q38.9%2014.8%2037.5%2014.9Q36.1%2014.8%2036%2013.4Q36.1%2011.9%2037.5%2011.9Z%27%2F%3E%3Cpath%20id%3D%27m1%27%20d%3D%27M0%2030Q0.1%2034.6%203.1%2037.6Q6.2%2040.6%2010.8%2040.8H38.4Q42.4%2040.7%2045.2%2038Q47.9%2035.2%2048%2031.2Q47.9%2027.7%2045.8%2025.1Q43.6%2022.5%2040.4%2021.8Q40.8%2020.6%2040.8%2019.2Q40.7%2016.1%2038.7%2014.1Q36.7%2012.1%2033.6%2012Q31.3%2012%2029.6%2013.2Q28%2010.5%2025.3%208.9Q22.6%207.3%2019.2%207.2Q14.1%207.4%2010.7%2010.7Q7.3%2014.1%207.2%2019.2Q7.2%2019.5%207.2%2019.8Q7.2%2019.8%207.2%2019.8Q4%2021%202%2023.7Q0.1%2026.4%200%2030Z%27%2F%3E%3Cpath%20id%3D%27m2%27%20d%3D%27M17.9%200.5Q19.2%20-0.5%2020.5%200.6Q24.4%204.1%2027.8%208.5Q29.3%206.3%2031.3%204.4Q32.6%203.3%2033.9%204.4Q36.4%206.8%2038.3%209.7Q40.4%2012.5%2041.8%2015.5Q43.3%2018.4%2044.1%2021.1Q45%2023.8%2045%2026Q44.9%2032%2042.2%2036.9Q39.4%2041.9%2034.6%2044.9Q29.9%2047.9%2024%2048Q18.1%2047.9%2013.3%2044.9Q8.6%2041.9%205.8%2036.9Q3.1%2032%203%2026Q3.2%2020.4%207.2%2013.6Q11.3%206.8%2017.9%200.5ZM24.2%2039Q27.7%2039%2030.7%2037Q33.6%2034.9%2034.3%2031.3Q35%2027.9%2033.3%2024.5Q32.3%2023.2%2031.1%2024.3L28.8%2027Q27.6%2028%2026.4%2026.9Q25.2%2025.4%2023.5%2023.3Q21.8%2021.1%2020.5%2019.5Q19.4%2018.4%2018.3%2019.4Q15.8%2022.4%2014.7%2024.6Q13.5%2026.7%2013.5%2028.8Q13.6%2033.7%2016.6%2036.3Q19.6%2039%2024.2%2039Z%27%2F%3E%3Cpath%20id%3D%27m3%27%20d%3D%27M4.5%206Q2.6%206.1%201.3%207.3Q0.1%208.6%200%2010.5Q0.1%2012.8%201.8%2014.1L22.2%2029.4Q24%2030.6%2025.8%2029.4L46.2%2014.1Q47.9%2012.8%2048%2010.5Q47.9%208.6%2046.7%207.3Q45.4%206.1%2043.5%206H4.5ZM0%2016.5V36V16.5V36Q0.1%2038.5%201.8%2040.2Q3.5%2041.9%206%2042H42Q44.5%2041.9%2046.2%2040.2Q47.9%2038.5%2048%2036V16.5L27.6%2031.8Q26%2033%2024%2033Q22%2033%2020.4%2031.8L0%2016.5Z%27%2F%3E%3Cpath%20id%3D%27m4%27%20d%3D%27M46.7%200.6Q48.2%201.6%2048%203.5L42%2042.5Q41.7%2043.9%2040.5%2044.6Q39.2%2045.3%2037.9%2044.7L26.6%2040.1L20.2%2047Q18.7%2048.4%2016.9%2047.8Q15.1%2046.9%2015%2045V37.1Q15%2036.5%2015.4%2036.2L31.1%2019Q31.9%2018%2031%2017Q30.1%2016.1%2029%2016.9L9.9%2033.8L1.7%2029.7Q0.1%2028.9%200%2027.1Q0%2025.3%201.5%2024.4L43.5%200.4Q45.2%20-0.5%2046.7%200.6Z%27%2F%3E%3Cpath%20id%3D%27m5%27%20d%3D%27M48%2022.5Q47.9%2027.9%2044.7%2032.3Q41.5%2036.8%2036.1%2039.4Q30.8%2041.9%2024%2042Q18.8%2042%2014.2%2040.3Q12.5%2041.6%209.2%2043.2Q5.6%2044.8%201.5%2045Q0.6%2045%200.1%2044.1Q-0.2%2043.1%200.5%2042.5Q0.5%2042.5%200.5%2042.5Q0.5%2042.5%200.5%2042.5Q0.5%2042.5%200.5%2042.5Q0.5%2042.5%200.5%2042.5Q0.5%2042.5%200.5%2042.5Q0.5%2042.5%200.5%2042.5Q0.5%2042.5%200.5%2042.5Q0.5%2042.5%200.5%2042.5V42.4Q0.5%2042.4%200.5%2042.4Q0.5%2042.4%200.6%2042.3Q0.8%2042.1%201%2041.7Q1.7%2041.1%202.4%2039.8Q4%2037.3%204.5%2033.8Q0.1%2029%200%2022.5Q0.1%2017.1%203.3%2012.7Q6.5%208.2%2011.9%205.6Q17.2%203.1%2024%203Q30.8%203.1%2036.1%205.6Q41.5%208.2%2044.7%2012.7Q47.9%2017.1%2048%2022.5Z%27%2F%3E%3Cpath%20id%3D%27m6%27%20d%3D%27M15.5%202.3Q14.9%200.9%2013.7%200.4Q12.4%20-0.2%2011%200.1L2.7%202.3Q0.2%203.3%200%206Q0.1%2017.7%205.7%2027.2Q11.3%2036.7%2020.8%2042.3Q30.3%2047.9%2042%2048Q44.7%2047.8%2045.7%2045.3L47.9%2037Q48.2%2035.6%2047.6%2034.3Q47.1%2033.1%2045.7%2032.5L36.7%2028.8Q34.1%2027.9%2032.3%2029.9L28.6%2034.5Q23.6%2032.2%2019.7%2028.3Q15.8%2024.4%2013.5%2019.4L18.1%2015.7Q20.1%2013.9%2019.2%2011.3L15.5%202.3Z%27%2F%3E%3Cpath%20id%3D%27m7%27%20d%3D%27M4.5%2027.6%2021.4%2043.5%204.5%2027.6%2021.4%2043.5Q22.5%2044.5%2024%2044.5Q25.5%2044.5%2026.6%2043.5L43.5%2027.6Q47.9%2023.5%2048%2017.4V16.9Q47.9%2011.8%2044.8%208.2Q41.7%204.6%2036.8%203.6Q33.6%203.2%2030.5%204.1Q27.5%205%2025.1%207.4L24%208.5L22.9%207.4Q20.5%205%2017.5%204.1Q14.4%203.2%2011.2%203.6Q6.3%204.6%203.2%208.2Q0.1%2011.8%200%2016.9V17.4Q0.1%2023.5%204.5%2027.6Z%27%2F%3E%3Cpath%20id%3D%27m8%27%20d%3D%27M26.6%202.4Q25.8%200.8%2024%200.7Q22.2%200.8%2021.3%202.4L15.5%2014.4L2.4%2016.4Q0.7%2016.6%200.2%2018.3Q-0.4%2020%200.9%2021.3L10.3%2030.6L8.1%2043.9Q7.9%2045.6%209.3%2046.7Q10.7%2047.7%2012.3%2046.9L24%2040.7L35.7%2046.9Q37.2%2047.7%2038.7%2046.7Q40.1%2045.6%2039.9%2043.9L37.7%2030.6L47.1%2021.3Q48.3%2020%2047.9%2018.3Q47.2%2016.6%2045.5%2016.4L32.4%2014.4L26.6%202.4Z%27%2F%3E%3Cpath%20id%3D%27m9%27%20d%3D%27M27.4%200Q20.7%200.1%2015.3%203.3Q9.9%206.4%206.6%2011.9Q3.5%2017.2%203.4%2024Q3.5%2030.8%206.8%2036.1Q9.9%2041.6%2015.3%2044.7Q20.7%2047.9%2027.4%2048Q37.4%2047.8%2044%2041.2Q44.9%2040.3%2044.4%2039.2Q43.8%2038.1%2042.5%2038.2Q41%2038.6%2039.3%2038.6Q31.4%2038.4%2026%2033Q20.8%2027.8%2020.6%2019.7Q20.6%2014.4%2023.1%2010.1Q25.8%205.8%2030.1%203.3Q31.2%202.7%2031%201.4Q30.6%200.3%2029.4%200.1Q28.4%200%2027.3%200Z%27%2F%3E%3C%2Fdefs%3E%3Cg%20fill%3D%27%2378B4DC%27%20fill-opacity%3D%270.18%27%3E%3Cuse%20href%3D%27%23m0%27%20transform%3D%27translate%2859%2044%29%20rotate%28-4%29%20scale%280.771%29%20translate%28-24%20-24%29%27%2F%3E%3Cuse%20href%3D%27%23m8%27%20transform%3D%27translate%28338%2054%29%20rotate%28-16%29%20scale%280.896%29%20translate%28-24%20-24%29%27%2F%3E%3Cuse%20href%3D%27%23m0%27%20transform%3D%27translate%28253%20142%29%20rotate%28-4%29%20scale%280.896%29%20translate%28-24%20-24%29%27%2F%3E%3Cuse%20href%3D%27%23m4%27%20transform%3D%27translate%28361%20163%29%20rotate%28-8%29%20scale%280.625%29%20translate%28-24%20-24%29%27%2F%3E%3Cuse%20href%3D%27%23m5%27%20transform%3D%27translate%2844%20240%29%20rotate%283%29%20scale%280.750%29%20translate%28-24%20-24%29%27%2F%3E%3Cuse%20href%3D%27%23m5%27%20transform%3D%27translate%28263%20247%29%20rotate%28-16%29%20scale%280.792%29%20translate%28-24%20-24%29%27%2F%3E%3Cuse%20href%3D%27%23m8%27%20transform%3D%27translate%28339%20248%29%20rotate%2817%29%20scale%280.667%29%20translate%28-24%20-24%29%27%2F%3E%3Cuse%20href%3D%27%23m9%27%20transform%3D%27translate%2864%20363%29%20rotate%2818%29%20scale%280.854%29%20translate%28-24%20-24%29%27%2F%3E%3Cuse%20href%3D%27%23m4%27%20transform%3D%27translate%28338%20363%29%20rotate%28-12%29%20scale%280.771%29%20translate%28-24%20-24%29%27%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E")}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;margin:0}
+body{font-family:-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--txt);overflow:hidden}
+button{font-family:inherit;cursor:pointer}
+button svg{display:block}
+.hidden{display:none!important}
+/* ---------- auth ---------- */
+#authView{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;background:#fff}
+#authView img{width:104px;height:104px;border-radius:24px;box-shadow:var(--shadow)}
+#authView h1{color:var(--txt);font-size:26px;margin:14px 0 4px}
+#authView p{color:var(--muted);margin:0 0 20px;font-size:14px;text-align:center}
+#authView form{width:100%;max-width:320px;display:flex;flex-direction:column;gap:10px}
+#authView input{padding:13px 14px;border:1px solid var(--line);border-radius:12px;font-size:16px;outline:none}
+#authView input:focus{border-color:var(--blue)}
+.btn{background:var(--blue);color:#fff;border:0;border-radius:12px;padding:13px;font-size:16px;font-weight:600}
+.btn:active{background:var(--blue-dark)}
+.link{background:none;border:0;color:var(--blue);font-size:14px;padding:6px}
+#authErr{color:#d33;font-size:14px;min-height:18px;text-align:center}
+/* ---------- layout ---------- */
+#mainView{height:100%;display:flex}
+#side{width:340px;max-width:100%;border-right:1px solid var(--line);display:flex;flex-direction:column;background:#fff}
+#chatPane{flex:1;display:flex;flex-direction:column;min-width:0;background-color:var(--chatbg);background-image:var(--chatbg-img);background-repeat:repeat;background-size:400px 400px}
+header.bar{background:#fff;color:var(--txt);padding:10px 14px;display:flex;align-items:center;gap:10px;min-height:56px;border-bottom:1px solid var(--line)}
+header.bar .title{font-weight:700;font-size:17px;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+header.bar .sub{font-size:12px;color:var(--blue);font-weight:400}
+header.bar button{background:transparent;color:var(--blue);border:0;border-radius:50%;width:38px;height:38px;flex:none;display:flex;align-items:center;justify-content:center;padding:0}
+header.bar button:active{background:var(--panel)}
+#sideIco{color:var(--blue);display:flex}
+.avatar{width:42px;height:42px;border-radius:50%;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:17px;flex:none}
+#addRow{display:flex;gap:8px;padding:10px;border-bottom:1px solid var(--line)}
+#addRow input{flex:1;padding:10px 12px;border:1px solid var(--line);border-radius:20px;font-size:15px;outline:none;min-width:0}
+#addRow input:focus{border-color:var(--blue)}
+#addRow button{background:var(--tint);color:var(--blue);border:0;border-radius:20px;padding:0 16px;font-weight:600}
+#chatList{overflow-y:auto;flex:1}
+.chatItem{display:flex;gap:11px;padding:11px 14px;cursor:pointer;border-bottom:1px solid #F0F5F8;align-items:center}
+.chatItem:active,.chatItem.active{background:var(--panel)}
+.chatItem .nm{font-weight:600;font-size:15px}
+.chatItem .pv{color:var(--muted);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:190px}
+.chatItem .tm{margin-left:auto;text-align:right;flex:none}
+.chatItem .tm .t{font-size:11px;color:var(--muted)}
+.badge{background:var(--blue);color:#fff;border-radius:10px;font-size:11px;min-width:19px;height:19px;display:inline-flex;align-items:center;justify-content:center;padding:0 5px;margin-top:3px}
+#meRow{padding:9px 14px;border-top:1px solid var(--line);display:flex;align-items:center;gap:9px;font-size:14px;color:var(--muted)}
+#meRow button{margin-left:auto;background:none;border:0;color:var(--blue);font-weight:600}
+/* ---------- bottom island (Instagram standard: white, icons only, avatar circle) ---------- */
+#bottomNav{border-top:1px solid var(--line);background:#fff;display:flex;align-items:center;justify-content:space-around;padding:7px 10px calc(7px + env(safe-area-inset-bottom))}
+#bottomNav button{background:transparent;border:0;color:#9AA9B4;width:46px;height:42px;display:flex;align-items:center;justify-content:center;border-radius:12px;padding:0}
+#bottomNav button:active{background:var(--panel)}
+#bottomNav button.active{color:var(--blue)}
+#meAvatarBtn{background:var(--blue)!important;color:#fff!important;border-radius:50%!important;width:34px!important;height:34px!important;font-weight:700;font-size:15px;margin:0 4px}
+/* ---------- messages ---------- */
+#msgs{flex:1;overflow-y:auto;padding:14px 12px;display:flex;flex-direction:column;gap:3px}
+.daySep{align-self:center;background:#fff;color:var(--muted);font-size:12px;padding:4px 12px;border-radius:12px;margin:8px 0;box-shadow:var(--shadow);border:1px solid var(--line)}
+.row{display:flex;margin-top:2px}
+.row.me{justify-content:flex-end}
+.row.them{justify-content:flex-start}
+.bubble{max-width:min(74%,520px);padding:8px 11px 6px;border-radius:16px;box-shadow:var(--shadow);position:relative;word-wrap:break-word;overflow-wrap:anywhere}
+.row.me .bubble{background:var(--tint);color:var(--txt);border-bottom-right-radius:5px}
+.row.them .bubble{background:#fff;border:1px solid var(--line);border-bottom-left-radius:5px}
+.bubble .txt{font-size:15px;line-height:1.35;white-space:pre-wrap}
+.bubble .meta{display:flex;gap:5px;justify-content:flex-end;align-items:center;font-size:11px;margin-top:3px;color:var(--muted)}
+.ticks{color:var(--tick);display:inline-flex;align-items:center}
+.ticks.seen{color:var(--blue)}
+.quote{border-left:3px solid var(--blue);background:rgba(34,159,217,.09);border-radius:6px;padding:5px 8px;font-size:13px;margin-bottom:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#3D5A6B}
+.bubble img.photo{max-width:100%;border-radius:10px;display:block}
+.voiceRow{display:flex;align-items:center;gap:9px;min-width:210px}
+.vPlay{width:36px;height:36px;border-radius:50%;border:0;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;flex:none;padding:0}
+.vWave{display:flex;gap:2.5px;align-items:center;height:26px;flex:1}
+.vBar{width:3.5px;border-radius:2px;background:#B9D9EA;flex:none}
+.vBar.played{background:var(--blue)}
+.vDur{font-size:12px;color:var(--muted);min-width:30px}
+.spd{background:#fff;border:1px solid var(--line);border-radius:10px;padding:3px 8px;font-size:12px;font-weight:700;color:var(--blue)}
+.reactBadge{position:absolute;bottom:-10px;right:8px;background:#fff;border:1px solid var(--line);border-radius:11px;box-shadow:var(--shadow);padding:2px 6px;display:flex;align-items:center;color:var(--red)}
+.row.me .reactBadge{right:auto;left:8px}
+.menuBtn{position:absolute;top:3px;right:3px;background:none;border:0;color:var(--muted);opacity:.55;padding:3px;display:flex}
+.deletedTxt{font-style:italic;opacity:.7}
+.callCard{align-self:center;background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);padding:8px 16px;font-size:13.5px;color:var(--txt);margin:4px 0;text-align:center;display:flex;flex-direction:column;align-items:center;gap:2px}
+.callCard .ccTop{display:flex;align-items:center;gap:7px;color:var(--txt)}
+.callCard .ccTop svg{color:var(--blue)}
+.callCard .ccTime{color:var(--muted);font-size:12px}
+.waiting{opacity:.65}
+.waitIco{display:inline-flex;color:var(--muted)}
+/* ---------- composer ---------- */
+#replyBar{background:#fff;border-top:1px solid var(--line);padding:7px 12px;font-size:13px;color:var(--muted);display:flex;gap:8px;align-items:center}
+#replyBar b{color:var(--blue)}
+#replyBar button{margin-left:auto;background:none;border:0;color:var(--muted);display:flex;padding:4px}
+#composer{background:#fff;border-top:1px solid var(--line);padding:8px;display:flex;gap:7px;align-items:flex-end}
+#composer textarea{flex:1;border:1px solid var(--line);border-radius:20px;padding:10px 14px;font-size:15.5px;resize:none;max-height:110px;outline:none;font-family:inherit;min-width:0}
+#composer textarea:focus{border-color:var(--blue)}
+#composer button{width:42px;height:42px;border-radius:50%;border:0;background:transparent;color:#6E8291;font-size:18px;flex:none;display:flex;align-items:center;justify-content:center;padding:0}
+#composer button:active{background:var(--panel)}
+#composer button.send{background:var(--blue);color:#fff}
+#composer button.rec{color:var(--red);animation:pulse 1s infinite}
+@keyframes pulse{50%{transform:scale(1.12)}}
+#recBar{background:#fff;border-top:1px solid var(--line);padding:12px 14px;display:flex;align-items:center;gap:12px;font-size:15px}
+#recBar .dot{width:11px;height:11px;border-radius:50%;background:var(--red);animation:pulse 1s infinite}
+#recBar button{border:0;border-radius:18px;padding:9px 16px;font-weight:600}
+#emptyPane{flex:1;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:15px;padding:20px;text-align:center}
+/* ---------- menus / sheets ---------- */
+#sheetWrap{position:fixed;inset:0;background:rgba(15,27,36,.38);display:flex;align-items:flex-end;justify-content:center;z-index:60}
+#sheet{background:#fff;width:100%;max-width:440px;border-radius:18px 18px 0 0;padding:8px}
+#sheet button{display:flex;width:100%;align-items:center;gap:12px;text-align:left;background:none;border:0;padding:14px 12px;font-size:16px;color:var(--txt);border-bottom:1px solid #F0F5F8}
+#sheet button svg{color:var(--blue);flex:none}
+#sheet button:last-child{border-bottom:0}
+#sheet .sheetHead{padding:12px;font-size:14px;color:var(--muted);border-bottom:1px solid #F0F5F8}
+/* ---------- call ---------- */
+#callView{position:fixed;inset:0;background:var(--navy);z-index:80;display:flex;flex-direction:column;color:#fff}
+#callView video{background:#000;object-fit:cover}
+#remoteVideo{flex:1;width:100%;min-height:0}
+#localVideo{position:absolute;top:70px;right:14px;width:104px;height:148px;border-radius:12px;border:2px solid rgba(255,255,255,.5)}
+#callTop{padding:16px;text-align:center}
+#callName{font-size:21px;font-weight:700}
+#callState{font-size:14px;opacity:.85;margin-top:3px}
+#callBtns{display:flex;gap:14px;justify-content:center;padding:20px;flex-wrap:wrap}
+#callBtns button{width:60px;height:60px;border-radius:50%;border:0;background:#fff;color:var(--navy);display:flex;align-items:center;justify-content:center;padding:0}
+#callBtns button.end{background:var(--red);color:#fff}
+#callBtns button.accept{background:#31C453;color:#fff}
+#callBtns button.off{background:var(--blue);color:#fff}
+#netBanner{background:#F5A623;color:#221A00;text-align:center;font-size:13.5px;padding:7px}
+@media (max-width:760px){
+  #side{width:100%;border-right:0}
+  #chatPane{position:fixed;inset:0;transform:translateX(100%);transition:transform .22s ease;z-index:40}
+  #chatPane.open{transform:none}
+}
+</style>
+</head>
+<body>
+
+<div id="authView">
+  <img src="/icon.png" alt="">
+  <h1>Messenger</h1>
+  <p>Fast, light chat and calls — made to work on weak connections.</p>
+  <form id="authForm">
+    <input id="authUser" autocomplete="username" placeholder="Username" required>
+    <input id="authPass" type="password" autocomplete="current-password" placeholder="Password (min 6)" required>
+    <div id="authErr"></div>
+    <button class="btn" id="authSubmit" type="submit">Log in</button>
+    <button class="link" id="authToggle" type="button">No account? Sign up</button>
+  </form>
+</div>
+
+<div id="mainView" class="hidden">
+  <div id="side">
+    <header class="bar"><span id="sideIco"></span><div class="title">Chats</div></header>
+    <div id="addRow"><input id="addInput" placeholder="Add by username"><button id="addBtn">Add</button></div>
+    <div id="chatList"></div>
+    <div id="meRow" class="hidden"><span id="meName"></span><button id="logoutBtn">Log out</button></div>
+    <nav id="bottomNav">
+      <button id="navChatsBtn" class="active" title="Chats"></button>
+      <button id="navCallsBtn" title="Calls"></button>
+      <button id="navSettingsBtn" title="Settings"></button>
+      <button id="meAvatarBtn" title="Profile"></button>
+    </nav>
+  </div>
+  <div id="chatPane">
+    <div id="emptyPane">Pick a chat, or add someone by username to start.</div>
+    <div id="chatInner" class="hidden" style="display:flex;flex-direction:column;flex:1;min-height:0">
+      <header class="bar">
+        <button id="backBtn" title="Back"></button>
+        <div class="avatar" id="peerAvatar">?</div>
+        <div class="title"><span id="peerName"></span><div class="sub" id="peerStatus"></div></div>
+        <button id="voiceCallBtn" title="Voice call"></button>
+        <button id="videoCallBtn" title="Video call"></button>
+      </header>
+      <div id="msgs"></div>
+      <div id="replyBar" class="hidden"><span>Reply to <b id="replyName"></b>: <span id="replyText"></span></span><button id="replyCancel" title="Cancel reply"></button></div>
+      <div id="recBar" class="hidden"><span class="dot"></span><span id="recTime">0:00</span><span style="flex:1;color:var(--muted)">Recording…</span><button id="recCancel" style="background:var(--panel)">Cancel</button><button id="recSend" style="background:var(--blue);color:#fff">Send</button></div>
+      <div id="composer">
+        <button id="photoBtn" title="Photo"></button>
+        <textarea id="msgInput" rows="1" placeholder="Message"></textarea>
+        <button id="micBtn" title="Voice message"></button>
+        <button id="sendBtn" class="send" title="Send"></button>
+      </div>
+      <input type="file" id="photoInput" accept="image/*" class="hidden">
+    </div>
+  </div>
+</div>
+
+<div id="netBanner" class="hidden">You are offline — messages will be sent when you are back.</div>
+
+<div id="sheetWrap" class="hidden"><div id="sheet"></div></div>
+
+<div id="callView" class="hidden">
+  <div id="callTop"><div id="callName"></div><div id="callState">Calling…</div></div>
+  <video id="remoteVideo" autoplay playsinline></video>
+  <video id="localVideo" autoplay playsinline muted></video>
+  <audio id="remoteAudio" autoplay></audio>
+  <div id="callBtns">
+    <button id="muteBtn" title="Mute"></button>
+    <button id="camBtn" title="Camera"></button>
+    <button id="spkBtn" title="Speaker"></button>
+    <button id="flipBtn" title="Switch camera"></button>
+    <button id="acceptBtn" class="accept hidden" title="Accept"></button>
+    <button id="endBtn" class="end" title="End"></button>
+  </div>
+</div>
+
+<script>
+'use strict';
+/* ================= icon system (Roliett icon law) =================
+   ONE set for the whole app: Telegram-grade line icons, single stroke
+   weight (1.8), rounded caps/joins, 24px grid. No emoji, no text glyphs
+   anywhere in the UI — every icon comes from here. */
+const ICON_PATHS = {
+  back: '<polyline points="15 18 9 12 15 6"/>',
+  search: '<circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/>',
+  phone: '<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/>',
+  phoneDown: '<g transform="rotate(135 12 12)"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></g>',
+  video: '<polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/>',
+  videoOff: '<polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/><line x1="2" y1="2" x2="22" y2="22"/>',
+  mic: '<path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/>',
+  micOff: '<path d="M9 9v3a3 3 0 0 0 5.12 2.12M15 9.34V4a3 3 0 0 0-5.94-.6"/><path d="M17 16.95A7 7 0 0 1 5 12v-2m14 0v2a7 7 0 0 1-.11 1.23"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/><line x1="2" y1="2" x2="22" y2="22"/>',
+  send: '<line x1="22" y1="2" x2="11" y2="13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/>',
+  image: '<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>',
+  attach: '<path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>',
+  play: '<path d="M8 5.14v13.72c0 .8.87 1.3 1.56.88l10.5-6.86a1.02 1.02 0 0 0 0-1.76L9.56 4.26A1.02 1.02 0 0 0 8 5.14z" fill="currentColor" stroke="none"/>',
+  pause: '<rect x="6" y="5" width="4" height="14" rx="1.2" fill="currentColor" stroke="none"/><rect x="14" y="5" width="4" height="14" rx="1.2" fill="currentColor" stroke="none"/>',
+  speaker: '<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>',
+  switchCam: '<polyline points="17 3 21 7 17 11"/><line x1="21" y1="7" x2="9" y2="7"/><polyline points="7 21 3 17 7 13"/><line x1="3" y1="17" x2="15" y2="17"/><circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none"/>',
+  heart: '<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" fill="currentColor" stroke="none"/>',
+  check: '<polyline points="20 6 9 17 4 12"/>',
+  doubleCheck: '<polyline points="17.5 6 6.5 17 2 12.5"/><polyline points="22 6 11 17 9 15"/>',
+  settings: '<circle cx="12" cy="12" r="3.2"/><line x1="12" y1="2.8" x2="12" y2="5.8"/><line x1="12" y1="2.8" x2="12" y2="5.8" transform="rotate(45 12 12)"/><line x1="12" y1="2.8" x2="12" y2="5.8" transform="rotate(90 12 12)"/><line x1="12" y1="2.8" x2="12" y2="5.8" transform="rotate(135 12 12)"/><line x1="12" y1="2.8" x2="12" y2="5.8" transform="rotate(180 12 12)"/><line x1="12" y1="2.8" x2="12" y2="5.8" transform="rotate(225 12 12)"/><line x1="12" y1="2.8" x2="12" y2="5.8" transform="rotate(270 12 12)"/><line x1="12" y1="2.8" x2="12" y2="5.8" transform="rotate(315 12 12)"/>',
+  chat: '<path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>',
+  close: '<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>',
+  plus: '<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>',
+  more: '<circle cx="12" cy="5" r="1.7" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.7" fill="currentColor" stroke="none"/><circle cx="12" cy="19" r="1.7" fill="currentColor" stroke="none"/>',
+  clock: '<circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15.5 14"/>',
+  reply: '<polyline points="9 14 4 9 9 4"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/>',
+  copy: '<rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>',
+  edit: '<path d="M17 3a2.83 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/>',
+  trash: '<polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/>',
+  logout: '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>'
+};
+function icon(name, size) {
+  const s = size || 24;
+  return '<svg width="' + s + '" height="' + s + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (ICON_PATHS[name] || '') + '</svg>';
+}
+/* ================= helpers & state ================= */
+const $ = id => document.getElementById(id);
+const BLUE = '#229FD9';
+let me = null;                 // {id, username}
+let contacts = [];             // [{id, username}]
+let messages = [];             // all messages for my chats, by id map below
+const msgById = new Map();
+let seqCursor = 0, sigCursor = 0;
+let openPeer = null;           // user object of the open chat
+let typingMap = {};            // userId -> true (they are typing to me)
+let replyTarget = null;
+let pollTimer = null, lastActivity = Date.now();
+let appConfig = { iranServerEnabled: false, iranEndpoint: '', iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] };
+
+function uuid() { return (crypto.randomUUID ? crypto.randomUUID() : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => { const r = Math.random() * 16 | 0; return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16); })); }
+function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+function fmtTime(ts) { const d = new Date(ts); return d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }); }
+function fmtDur(sec) { sec = Math.max(0, Math.floor(sec || 0)); return Math.floor(sec / 60) + ':' + String(sec % 60).padStart(2, '0'); }
+function fmtDay(ts) { const d = new Date(ts), now = new Date(); if (d.toDateString() === now.toDateString()) return 'Today'; const y = new Date(now - 864e5); if (d.toDateString() === y.toDateString()) return 'Yesterday'; return d.toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' }); }
+function initial(name) { return (name || '?').trim().charAt(0).toUpperCase(); }
+async function api(path, opts) {
+  const r = await fetch(path, Object.assign({ headers: { 'Content-Type': 'application/json' } }, opts || {}));
+  const data = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(data.error || ('http_' + r.status));
+  return data;
+}
+function post(path, body) { return api(path, { method: 'POST', body: JSON.stringify(body || {}) }); }
+/* static icon slots */
+$('sideIco').innerHTML = icon('chat', 24);
+$('backBtn').innerHTML = icon('back', 26);
+$('voiceCallBtn').innerHTML = icon('phone', 22);
+$('videoCallBtn').innerHTML = icon('video', 24);
+$('photoBtn').innerHTML = icon('image', 23);
+$('micBtn').innerHTML = icon('mic', 23);
+$('sendBtn').innerHTML = icon('send', 20);
+$('replyCancel').innerHTML = icon('close', 18);
+$('navChatsBtn').innerHTML = icon('chat', 25);
+$('navCallsBtn').innerHTML = icon('phone', 24);
+$('navSettingsBtn').innerHTML = icon('settings', 25);
+$('muteBtn').innerHTML = icon('mic', 25);
+$('camBtn').innerHTML = icon('video', 26);
+$('spkBtn').innerHTML = icon('speaker', 25);
+$('flipBtn').innerHTML = icon('switchCam', 25);
+$('acceptBtn').innerHTML = icon('phone', 26);
+$('endBtn').innerHTML = icon('phoneDown', 26);
+
+/* ================= offline queue =================
+   Unsent messages live in localStorage per user. They render with a clock
+   (waiting) and are flushed, with the SAME uuid, whenever the poll succeeds —
+   the server dedupes by uuid, so a retry after a network cut never doubles. */
+function queueKey() { return 'mq_' + (me ? me.username : 'anon'); }
+function loadQueue() { try { return JSON.parse(localStorage.getItem(queueKey()) || '[]'); } catch (e) { return []; } }
+function saveQueue(q) { localStorage.setItem(queueKey(), JSON.stringify(q)); }
+async function flushQueue() {
+  const q = loadQueue(); if (!q.length) return;
+  const left = [];
+  for (const item of q) {
+    try { const r = await post('/api/messages', item); upsertMessage(r.message); }
+    catch (e) { left.push(item); }
+  }
+  saveQueue(left); renderMessages(); renderChatList();
+}
+function queuedFor(peerId) { return loadQueue().filter(q => q.to === peerId); }
+
+/* ================= auth ================= */
+let signupMode = false;
+$('authToggle').onclick = () => { signupMode = !signupMode; $('authSubmit').textContent = signupMode ? 'Sign up' : 'Log in'; $('authToggle').textContent = signupMode ? 'Already have an account? Log in' : 'No account? Sign up'; $('authErr').textContent = ''; };
+$('authForm').onsubmit = async e => {
+  e.preventDefault(); $('authErr').textContent = '';
+  try {
+    const r = await post(signupMode ? '/api/signup' : '/api/login', { username: $('authUser').value.trim(), password: $('authPass').value });
+    me = r.user; startApp();
+  } catch (err) { $('authErr').textContent = String(err.message).replace(/_/g, ' '); }
+};
+$('logoutBtn').onclick = async () => { try { await post('/api/logout'); } catch (e) {} location.reload(); };
+
+async function boot() {
+  try { appConfig = await api('/api/config'); } catch (e) {}
+  if (appConfig.iranServerEnabled) probeIran(); // client only probes the Iran endpoint when the switch is ON
+  try { const r = await api('/api/me'); me = r.user; startApp(); } catch (e) { /* stay on auth */ }
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(() => {});
+}
+/* Dual-server: the fixed Iran endpoint is already known to the client. It is
+   probed ONLY when IRAN_SERVER_ENABLED is on (Parsa buys the Arvan server
+   first, then the switch flips — no app update needed on phones in Iran). */
+function probeIran() {
+  if (!appConfig.iranEndpoint) return;
+  const ping = () => fetch(appConfig.iranEndpoint.replace(/\/$/, '') + '/api/ping', { mode: 'no-cors' }).catch(() => {});
+  ping(); setInterval(ping, 60000);
+}
+
+/* ================= app start / polling ================= */
+function startApp() {
+  $('authView').classList.add('hidden');
+  $('mainView').classList.remove('hidden');
+  $('meName').textContent = '@' + me.username;
+  $('meAvatarBtn').textContent = initial(me.username);
+  poll(); schedulePoll();
+  flushQueue();
+}
+function schedulePoll() {
+  clearTimeout(pollTimer);
+  // Adaptive polling: fast while you are actively chatting, slow when idle
+  // or the tab is hidden — kind to weak Iranian connections and batteries.
+  const idle = Date.now() - lastActivity > 60000 || document.hidden;
+  pollTimer = setTimeout(async () => { await poll(); schedulePoll(); }, idle ? 4000 : 1200);
+}
+['touchstart', 'keydown', 'mousemove'].forEach(ev => addEventListener(ev, () => { lastActivity = Date.now(); }, { passive: true }));
+
+async function poll() {
+  if (!me) return;
+  try {
+    const r = await api('/api/poll?seq=' + seqCursor + '&sig=' + sigCursor);
+    seqCursor = Math.max(seqCursor, r.seq || 0); sigCursor = Math.max(sigCursor, r.sigSeq || 0);
+    contacts = r.contacts || contacts;
+    let changed = false;
+    for (const m of (r.messages || [])) { upsertMessage(m); changed = true; }
+    typingMap = r.typing || {};
+    for (const s of (r.signals || [])) handleSignal(s);
+    if (changed) { renderMessages(); }
+    renderChatList(); updatePeerStatus();
+    $('netBanner').classList.add('hidden');
+    flushQueue();
+  } catch (e) {
+    $('netBanner').classList.remove('hidden');
+  }
+}
+function upsertMessage(m) {
+  const old = msgById.get(m.id);
+  msgById.set(m.id, m);
+  if (!old) messages.push(m);
+  else messages[messages.indexOf(old)] = m;
+  messages.sort((a, b) => a.seq - b.seq);
+}
+
+/* ================= chat list ================= */
+function lastMessageWith(peerId) {
+  const all = messages.filter(m => (m.from === peerId && m.to === me.id) || (m.from === me.id && m.to === peerId));
+  const q = queuedFor(peerId);
+  return { msg: all[all.length - 1] || null, queued: q.length };
+}
+function unreadWith(peerId) { return messages.filter(m => m.from === peerId && m.to === me.id && !m.seenAt).length; }
+function previewOf(m) {
+  if (!m) return 'Say hello';
+  if (m.deleted) return 'Message deleted';
+  if (m.type === 'voice') return 'Voice message';
+  if (m.type === 'photo') return 'Photo';
+  if (m.type === 'call') { const ci = m.callInfo || {}; return (ci.outcome === 'ended' ? '' : 'Missed ') + (ci.kind === 'video' ? 'Video call' : 'Voice call'); }
+  return (m.from === me.id ? 'You: ' : '') + m.text;
+}
+function renderChatList() {
+  const el = $('chatList'); el.innerHTML = '';
+  const sorted = contacts.slice().sort((a, b) => {
+    const la = lastMessageWith(a.id).msg, lb = lastMessageWith(b.id).msg;
+    return ((lb && lb.ts) || 0) - ((la && la.ts) || 0);
+  });
+  for (const c of sorted) {
+    const { msg, queued } = lastMessageWith(c.id);
+    const un = unreadWith(c.id);
+    const div = document.createElement('div');
+    div.className = 'chatItem' + (openPeer && openPeer.id === c.id ? ' active' : '');
+    div.innerHTML = '<div class="avatar">' + esc(initial(c.username)) + '</div>' +
+      '<div style="min-width:0"><div class="nm">' + esc(c.username) + '</div><div class="pv">' + esc(previewOf(msg)) + (queued ? ' · waiting' : '') + '</div></div>' +
+      '<div class="tm">' + (msg ? '<div class="t">' + fmtTime(msg.ts) + '</div>' : '') + (un ? '<span class="badge">' + un + '</span>' : '') + '</div>';
+    div.onclick = () => openChat(c);
+    el.appendChild(div);
+  }
+  if (!sorted.length) el.innerHTML = '<div style="padding:16px;color:var(--muted);font-size:14px">No chats yet. Add a friend by username above.</div>';
+}
+$('addBtn').onclick = async () => {
+  const name = $('addInput').value.trim(); if (!name) return;
+  try { const r = await post('/api/contacts', { username: name }); $('addInput').value = ''; if (!contacts.find(c => c.id === r.contact.id)) contacts.push(r.contact); renderChatList(); openChat(r.contact); }
+  catch (e) { alert('Could not add: ' + String(e.message).replace(/_/g, ' ')); }
+};
+
+/* ================= bottom island: chats / calls / settings / profile ================= */
+function sheetHead(text) { const h = document.createElement('div'); h.className = 'sheetHead'; h.textContent = text; $('sheet').appendChild(h); }
+function sheetBtn(iconName, label, fn, iconColor) {
+  const b = document.createElement('button');
+  b.innerHTML = (iconName ? icon(iconName, 21) : '') + '<span>' + esc(label) + '</span>';
+  if (iconColor && b.querySelector('svg')) b.querySelector('svg').style.color = iconColor;
+  b.onclick = () => { closeSheet(); fn(); };
+  $('sheet').appendChild(b); return b;
+}
+function closeSheet() { $('sheetWrap').classList.add('hidden'); }
+$('sheetWrap').onclick = e => { if (e.target === $('sheetWrap')) closeSheet(); };
+$('navChatsBtn').onclick = () => {
+  $('navChatsBtn').classList.add('active'); $('navCallsBtn').classList.remove('active'); $('navSettingsBtn').classList.remove('active');
+  if (openPeer) $('backBtn').click();
+  $('chatList').scrollTop = 0;
+};
+$('navCallsBtn').onclick = () => {
+  $('navCallsBtn').classList.add('active'); $('navChatsBtn').classList.remove('active'); $('navSettingsBtn').classList.remove('active');
+  const sheet = $('sheet'); sheet.innerHTML = ''; sheetHead('Recent calls');
+  const calls = messages.filter(m => m.type === 'call' && !m.deleted).slice().sort((a, b) => b.ts - a.ts).slice(0, 12);
+  if (!calls.length) { const d = document.createElement('div'); d.className = 'sheetHead'; d.textContent = 'No calls yet.'; sheet.appendChild(d); }
+  for (const m of calls) {
+    const peerId = m.from === me.id ? m.to : m.from;
+    const peer = contacts.find(c => c.id === peerId);
+    const ci = m.callInfo || {};
+    const label = (peer ? peer.username : 'Unknown') + ' · ' + (ci.outcome === 'ended' ? (ci.kind === 'video' ? 'Video' : 'Voice') + ' call · ' + fmtDur(ci.durationSec || 0) : 'Missed ' + (ci.kind === 'video' ? 'video' : 'voice') + ' call') + ' · ' + fmtTime(m.ts);
+    sheetBtn(ci.kind === 'video' ? 'video' : 'phone', label, () => { if (peer) openChat(peer); });
+  }
+  $('sheetWrap').classList.remove('hidden');
+};
+function openProfileSheet() {
+  $('navSettingsBtn').classList.add('active'); $('navChatsBtn').classList.remove('active'); $('navCallsBtn').classList.remove('active');
+  const sheet = $('sheet'); sheet.innerHTML = ''; sheetHead('Signed in as @' + (me ? me.username : ''));
+  sheetBtn('logout', 'Log out', () => $('logoutBtn').click());
+  $('sheetWrap').classList.remove('hidden');
+}
+$('navSettingsBtn').onclick = openProfileSheet;
+$('meAvatarBtn').onclick = openProfileSheet;
+
+/* ================= chat pane ================= */
+function openChat(peer) {
+  openPeer = peer;
+  $('emptyPane').classList.add('hidden');
+  $('chatInner').classList.remove('hidden');
+  $('chatPane').classList.add('open');
+  $('peerName').textContent = peer.username;
+  $('peerAvatar').textContent = initial(peer.username);
+  clearReply();
+  renderMessages(); renderChatList(); updatePeerStatus();
+  post('/api/seen', { with: peer.id }).catch(() => {});
+  setTimeout(() => { messages.filter(m => m.from === peer.id).forEach(m => { m.seenAt = m.seenAt || Date.now(); }); renderChatList(); }, 400);
+}
+$('backBtn').onclick = () => { $('chatPane').classList.remove('open'); openPeer = null; renderChatList(); };
+function updatePeerStatus() {
+  if (!openPeer) return;
+  $('peerStatus').textContent = typingMap[openPeer.id] ? 'typing…' : '';
+}
+function ticksHtml(m) {
+  if (m.from !== me.id) return '';
+  if (m.seenAt) return '<span class="ticks seen">' + icon('doubleCheck', 18) + '</span>';
+  if (m.deliveredAt) return '<span class="ticks">' + icon('doubleCheck', 18) + '</span>';
+  return '<span class="ticks">' + icon('check', 15) + '</span>';
+}
+function waveBars(m) {
+  let h = 7; const s0 = String(m.id || '');
+  for (let i = 0; i < s0.length; i++) h = (h * 31 + s0.charCodeAt(i)) >>> 0;
+  let s = '';
+  for (let i = 0; i < 18; i++) { h = (h * 1103515245 + 12345) >>> 0; s += '<span class="vBar" style="height:' + (6 + (h % 15)) + 'px"></span>'; }
+  return s;
+}
+function quoteLabel(rt) { return rt.type === 'text' ? rt.text : (rt.type === 'voice' ? 'Voice message' : rt.type === 'photo' ? 'Photo' : 'Call'); }
+function bubbleHtml(m) {
+  const mine = m.from === me.id;
+  let inner = '';
+  if (m.replyTo) inner += '<div class="quote">' + esc(quoteLabel(m.replyTo)) + '</div>';
+  if (m.deleted) inner += '<div class="txt deletedTxt">This message was deleted</div>';
+  else if (m.type === 'photo') inner += '<img class="photo" src="' + esc(m.media || '') + '" alt="photo">';
+  else if (m.type === 'voice') inner += '<div class="voiceRow"><button class="vPlay" data-vplay title="Play">' + icon('play', 15) + '</button><div class="vWave">' + waveBars(m) + '</div><span class="vDur"></span><audio preload="metadata" style="display:none" src="' + esc(m.media || '') + '"></audio><button class="spd" data-spd>1x</button></div>';
+  else inner += '<div class="txt">' + esc(m.text) + '</div>';
+  const reacts = Object.values(m.reaction || {});
+  inner += '<div class="meta">' + (m.edited && !m.deleted ? '<span>edited</span>' : '') + '<span>' + fmtTime(m.ts) + '</span>' + ticksHtml(m) + '</div>';
+  if (reacts.length) inner += '<span class="reactBadge">' + icon('heart', 13) + '</span>';
+  return '<div class="bubble">' + inner + (m.deleted ? '' : '<button class="menuBtn" data-menu="' + m.id + '">' + icon('more', 16) + '</button>') + '</div>';
+}
+function renderMessages() {
+  if (!openPeer) return;
+  const box = $('msgs'); const nearBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 140;
+  let html = ''; let lastDay = '';
+  const list = messages.filter(m => (m.from === openPeer.id && m.to === me.id) || (m.from === me.id && m.to === openPeer.id));
+  for (const m of list) {
+    const day = fmtDay(m.ts);
+    if (day !== lastDay) { html += '<div class="daySep">' + esc(day) + '</div>'; lastDay = day; }
+    if (m.type === 'call' && !m.deleted) {
+      const ci = m.callInfo || {};
+      const label = ci.outcome === 'ended' ? (ci.kind === 'video' ? 'Video' : 'Voice') + ' call · ' + fmtDur(ci.durationSec || 0) : 'Missed ' + (ci.kind === 'video' ? 'video' : 'voice') + ' call';
+      html += '<div class="callCard"><div class="ccTop">' + icon(ci.kind === 'video' ? 'video' : 'phone', 16) + '<span>' + label + '</span></div><div class="ccTime">' + fmtTime(m.ts) + '</div></div>';
+      continue;
+    }
+    html += '<div class="row ' + (m.from === me.id ? 'me' : 'them') + '" data-mid="' + m.id + '">' + bubbleHtml(m) + '</div>';
+  }
+  for (const q of queuedFor(openPeer.id)) {
+    html += '<div class="row me"><div class="bubble waiting"><div class="txt">' + esc(q.type === 'text' ? q.text : (q.type === 'voice' ? 'Voice message' : q.type === 'photo' ? 'Photo' : 'Message')) + '</div><div class="meta"><span>' + fmtTime(q.ts) + '</span><span class="waitIco" title="Waiting to send">' + icon('clock', 13) + '</span></div></div></div>';
+  }
+  box.innerHTML = html;
+  box.querySelectorAll('[data-menu]').forEach(b => b.onclick = e => { e.stopPropagation(); openMenu(b.getAttribute('data-menu')); });
+  box.querySelectorAll('[data-spd]').forEach(b => b.onclick = () => {
+    const audio = b.closest('.voiceRow').querySelector('audio');
+    const rates = [1, 1.5, 2]; const next = rates[(rates.indexOf(audio.playbackRate) + 1) % 3];
+    audio.playbackRate = next; b.textContent = next + 'x';
+  });
+  box.querySelectorAll('[data-vplay]').forEach(btn => {
+    const row = btn.closest('.voiceRow'); const audio = row.querySelector('audio');
+    const bars = row.querySelectorAll('.vBar'); const dur = row.querySelector('.vDur');
+    audio.addEventListener('loadedmetadata', () => { if (isFinite(audio.duration)) dur.textContent = fmtDur(audio.duration); });
+    audio.addEventListener('timeupdate', () => {
+      if (!audio.duration) return;
+      const f = audio.currentTime / audio.duration;
+      bars.forEach((bar, i) => bar.classList.toggle('played', (i + 1) / bars.length <= f));
+      dur.textContent = fmtDur(audio.currentTime);
+    });
+    audio.addEventListener('ended', () => { btn.innerHTML = icon('play', 15); bars.forEach(bar => bar.classList.remove('played')); if (isFinite(audio.duration)) dur.textContent = fmtDur(audio.duration); });
+    audio.addEventListener('pause', () => { if (!audio.ended) btn.innerHTML = icon('play', 15); });
+    btn.onclick = () => {
+      if (audio.paused) { box.querySelectorAll('audio').forEach(a => { if (a !== audio) a.pause(); }); audio.play(); btn.innerHTML = icon('pause', 15); }
+      else audio.pause();
+    };
+  });
+  if (nearBottom) box.scrollTop = box.scrollHeight;
+}
+
+/* ================= message actions ================= */
+function openMenu(id) {
+  const m = msgById.get(id); if (!m) return;
+  const sheet = $('sheet'); sheet.innerHTML = '';
+  sheetBtn('reply', 'Reply', () => setReply(m));
+  const hasReact = !!(m.reaction && m.reaction[me.id]);
+  sheetBtn('heart', hasReact ? 'Remove reaction' : 'React', async () => { try { const r = await post('/api/messages/react', { id: m.id, emoji: hasReact ? null : '❤️' }); upsertMessage(r.message); renderMessages(); } catch (e) {} }, '#E5484D');
+  if (m.type === 'text') sheetBtn('copy', 'Copy', () => { navigator.clipboard && navigator.clipboard.writeText(m.text); });
+  if (m.from === me.id && m.type === 'text') sheetBtn('edit', 'Edit', () => { const t = prompt('Edit message', m.text); if (t != null && t.trim()) post('/api/messages/edit', { id: m.id, text: t }).then(r => { upsertMessage(r.message); renderMessages(); }).catch(() => {}); });
+  if (m.from === me.id) sheetBtn('trash', 'Delete', async () => { try { const r = await post('/api/messages/delete', { id: m.id }); upsertMessage(r.message); renderMessages(); } catch (e) {} }, '#E5484D');
+  sheetBtn('close', 'Cancel', () => {});
+  $('sheetWrap').classList.remove('hidden');
+}
+function setReply(m) {
+  replyTarget = m;
+  $('replyName').textContent = m.from === me.id ? 'yourself' : openPeer.username;
+  $('replyText').textContent = quoteLabel(m);
+  $('replyBar').classList.remove('hidden'); $('msgInput').focus();
+}
+function clearReply() { replyTarget = null; $('replyBar').classList.add('hidden'); }
+$('replyCancel').onclick = clearReply;
+/* ================= sending ================= */
+async function sendPayload(payload) {
+  try { const r = await post('/api/messages', payload); upsertMessage(r.message); renderMessages(); renderChatList(); return true; }
+  catch (e) {
+    const q = loadQueue(); q.push(payload); saveQueue(q); renderMessages();
+    return false;
+  }
+}
+function basePayload(type) {
+  return { id: uuid(), to: openPeer.id, type, ts: Date.now(), replyTo: replyTarget ? { id: replyTarget.id, from: replyTarget.from, text: replyTarget.type === 'text' ? replyTarget.text : '', type: replyTarget.type } : null };
+}
+async function sendText() {
+  const inp = $('msgInput'); const text = inp.value.trim(); if (!text || !openPeer) return;
+  inp.value = ''; inp.style.height = 'auto';
+  const p = basePayload('text'); p.text = text;
+  clearReply(); await sendPayload(p);
+  post('/api/typing', { to: openPeer.id, typing: false }).catch(() => {});
+}
+$('sendBtn').onclick = sendText;
+$('msgInput').addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendText(); } });
+let typingSent = 0;
+$('msgInput').addEventListener('input', () => {
+  const inp = $('msgInput'); inp.style.height = 'auto'; inp.style.height = Math.min(inp.scrollHeight, 110) + 'px';
+  if (openPeer && Date.now() - typingSent > 3000) { typingSent = Date.now(); post('/api/typing', { to: openPeer.id, typing: true }).catch(() => {}); }
+});
+
+/* ---- photo: compress on the phone first, so weak networks can carry it ---- */
+$('photoBtn').onclick = () => $('photoInput').click();
+$('photoInput').onchange = async () => {
+  const file = $('photoInput').files[0]; $('photoInput').value = '';
+  if (!file || !openPeer) return;
+  const img = new Image();
+  img.onload = async () => {
+    const max = 1280; const scale = Math.min(1, max / Math.max(img.width, img.height));
+    const cv = document.createElement('canvas'); cv.width = Math.round(img.width * scale); cv.height = Math.round(img.height * scale);
+    cv.getContext('2d').drawImage(img, 0, 0, cv.width, cv.height);
+    const dataUrl = cv.toDataURL('image/jpeg', 0.82);
+    try {
+      const up = await post('/api/upload', { kind: 'photo', mime: 'image/jpeg', data: dataUrl.split(',')[1] });
+      const p = basePayload('photo'); p.media = up.url; clearReply(); await sendPayload(p);
+    } catch (e) { alert('Photo could not be sent (connection).'); }
+    URL.revokeObjectURL(img.src);
+  };
+  img.src = URL.createObjectURL(file);
+};
+
+/* ---- voice messages ---- */
+let recorder = null, recChunks = [], recStart = 0, recTimer = null;
+$('micBtn').onclick = async () => {
+  if (!openPeer) return;
+  if (recorder) return;
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    recChunks = []; recorder = new MediaRecorder(stream);
+    recorder.ondataavailable = e => recChunks.push(e.data);
+    recorder.onstop = () => stream.getTracks().forEach(t => t.stop());
+    recorder.start(); recStart = Date.now();
+    $('recBar').classList.remove('hidden'); $('composer').classList.add('hidden'); $('micBtn').classList.add('rec');
+    recTimer = setInterval(() => { const s = Math.floor((Date.now() - recStart) / 1000); $('recTime').textContent = Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); }, 500);
+  } catch (e) { alert('Microphone is not available.'); }
+};
+function stopRec(sendIt) {
+  if (!recorder) return;
+  const rec = recorder; recorder = null;
+  clearInterval(recTimer); $('recBar').classList.add('hidden'); $('composer').classList.remove('hidden'); $('micBtn').classList.remove('rec');
+  rec.ondataavailable = e => recChunks.push(e.data);
+  rec.onstop = async () => {
+    rec.stream && rec.stream.getTracks().forEach(t => t.stop());
+    if (!sendIt || !recChunks.length) return;
+    const blob = new Blob(recChunks, { type: rec.mimeType || 'audio/webm' });
+    const buf = await blob.arrayBuffer();
+    let bin = ''; const bytes = new Uint8Array(buf);
+    for (let i = 0; i < bytes.length; i += 8192) bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 8192));
+    try {
+      const up = await post('/api/upload', { kind: 'voice', mime: blob.type, data: btoa(bin) });
+      const p = basePayload('voice'); p.media = up.url; clearReply(); await sendPayload(p);
+    } catch (e) { alert('Voice message could not be sent (connection).'); }
+  };
+  rec.stop();
+}
+$('recCancel').onclick = () => stopRec(false);
+$('recSend').onclick = () => stopRec(true);
+
+/* ================= calls (WebRTC) =================
+   Media goes phone-to-phone. This server only relays the introductions
+   (offer/answer/ICE) through the poll. Required behaviours:
+   - brief drop -> "Reconnecting…" + ICE restart, the call does NOT end;
+   - weak connection -> video steps down, then turns OFF and audio continues. */
+let pc = null, localStream = null, callPeer = null, callId = null, callMedia = 'voice';
+let callStartedAt = 0, callConnected = false, reconnectTimer = null, statsTimer = null, isCaller = false, pendingIce = [];
+let camFacing = 'user', speakerOn = false;
+const iceConfig = () => ({ iceServers: appConfig.iceServers || [{ urls: 'stun:stun.l.google.com:19302' }] });
+
+function showCall(state) { $('callView').classList.remove('hidden'); $('callState').textContent = state; }
+function hideCall() { $('callView').classList.add('hidden'); }
+async function startCall(media) {
+  if (!openPeer || pc) return;
+  callPeer = openPeer; callMedia = media; isCaller = true; callConnected = false;
+  callId = uuid(); callStartedAt = 0;
+  $('callName').textContent = callPeer.username;
+  $('acceptBtn').classList.add('hidden');
+  showCall(media === 'video' ? 'Calling (video)…' : 'Calling…');
+  await setupPc(true);
+  const offer = await pc.createOffer();
+  await pc.setLocalDescription(offer);
+  await post('/api/signal', { to: callPeer.id, kind: 'offer', callId, media, payload: offer }).catch(() => {});
+  setTimeout(() => { if (pc && !callConnected) endCall(true); }, 60000); // no answer -> missed
+}
+async function setupPc(makeOfferSide) {
+  pc = new RTCPeerConnection(iceConfig());
+  try { localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: callMedia === 'video' ? { facingMode: camFacing } : false }); }
+  catch (e) { localStream = await navigator.mediaDevices.getUserMedia({ audio: true }); callMedia = 'voice'; }
+  localStream.getTracks().forEach(t => pc.addTrack(t, localStream));
+  $('localVideo').srcObject = localStream;
+  $('localVideo').style.display = callMedia === 'video' ? '' : 'none';
+  $('remoteVideo').style.display = callMedia === 'video' ? '' : 'none';
+  pc.ontrack = e => {
+    const stream = e.streams[0];
+    if (e.track.kind === 'video') { $('remoteVideo').srcObject = stream; $('remoteVideo').style.display = ''; }
+    else $('remoteAudio').srcObject = stream;
+  };
+  pc.onicecandidate = e => { if (e.candidate && callPeer) post('/api/signal', { to: callPeer.id, kind: 'ice', callId, media: callMedia, payload: e.candidate.toJSON() }).catch(() => {}); };
+  pc.onconnectionstatechange = () => {
+    if (!pc) return;
+    if (pc.connectionState === 'connected') {
+      callConnected = true; callStartedAt = callStartedAt || Date.now();
+      clearTimeout(reconnectTimer);
+      showCall('Connected'); startStatsWatch();
+    } else if (pc.connectionState === 'disconnected') {
+      // Brief cut (very common on Iranian mobile data): do NOT end the call.
+      showCall('Reconnecting…');
+      clearTimeout(reconnectTimer);
+      reconnectTimer = setTimeout(() => { if (pc && pc.connectionState !== 'connected') endCall(false); }, 35000);
+    } else if (pc.connectionState === 'failed') {
+      showCall('Reconnecting…');
+      restartIce();
+    }
+  };
+  for (const c of pendingIce) { try { await pc.addIceCandidate(c); } catch (e) {} }
+  pendingIce = [];
+}
+async function restartIce() {
+  if (!pc || !isCaller) { if (pc) { try { pc.restartIce(); } catch (e) {} } return; }
+  try {
+    pc.restartIce();
+    const offer = await pc.createOffer({ iceRestart: true });
+    await pc.setLocalDescription(offer);
+    await post('/api/signal', { to: callPeer.id, kind: 'offer', callId, media: callMedia, payload: offer });
+  } catch (e) {}
+}
+/* Adaptive quality: check the real connection every 3s. Getting worse ->
+   step 1: shrink video. Still bad -> step 2: video OFF, voice keeps going. */
+let qualityStep = 0;
+function startStatsWatch() {
+  clearInterval(statsTimer); qualityStep = 0;
+  statsTimer = setInterval(async () => {
+    if (!pc || pc.connectionState !== 'connected') return;
+    try {
+      const stats = await pc.getStats(); let lost = 0, recv = 0, jitter = 0;
+      stats.forEach(r => { if (r.type === 'inbound-rtp' && (r.kind === 'video' || r.kind === 'audio')) { lost += r.packetsLost || 0; recv += r.packetsReceived || 0; jitter = Math.max(jitter, r.jitter || 0); } });
+      const lossRatio = recv ? lost / (lost + recv) : 0;
+      const bad = lossRatio > 0.08 || jitter > 0.09;
+      if (bad && qualityStep === 0) {
+        qualityStep = 1;
+        pc.getSenders().filter(s => s.track && s.track.kind === 'video').forEach(s => { const p = s.getParameters(); if (p.encodings && p.encodings[0]) { p.encodings[0].maxBitrate = 250000; p.encodings[0].scaleResolutionDownBy = 2; s.setParameters(p).catch(() => {}); } });
+        showCall('Weak connection — lowering video quality');
+      } else if (bad && qualityStep === 1) {
+        qualityStep = 2;
+        pc.getSenders().filter(s => s.track && s.track.kind === 'video').forEach(s => { s.track.enabled = false; });
+        if (localStream) localStream.getVideoTracks().forEach(t => { t.enabled = false; });
+        $('remoteVideo').style.display = 'none'; $('localVideo').style.display = 'none';
+        $('camBtn').innerHTML = icon('videoOff', 26); $('camBtn').classList.add('off');
+        showCall('Video off — voice continues');
+      } else if (!bad && qualityStep === 0) showCall('Connected');
+    } catch (e) {}
+  }, 3000);
+}
+async function handleSignal(s) {
+  if (s.kind === 'offer') {
+    if (pc && callId !== s.callId) { await post('/api/signal', { to: s.from, kind: 'busy', callId: s.callId }).catch(() => {}); return; }
+    if (pc && callId === s.callId) { // ICE-restart re-offer on the live call
+      await pc.setRemoteDescription(s.payload);
+      const ans = await pc.createAnswer(); await pc.setLocalDescription(ans);
+      await post('/api/signal', { to: s.from, kind: 'answer', callId, media: callMedia, payload: ans }).catch(() => {});
+      return;
+    }
+    const fromUser = contacts.find(c => c.id === s.from) || { id: s.from, username: 'Someone' };
+    callPeer = fromUser; callMedia = s.media; callId = s.callId; isCaller = false; callConnected = false;
+    window._pendingOffer = s.payload;
+    $('callName').textContent = fromUser.username;
+    $('acceptBtn').classList.remove('hidden');
+    showCall((s.media === 'video' ? 'Incoming video call…' : 'Incoming voice call…'));
+  } else if (s.kind === 'answer') {
+    if (pc && callId === s.callId) { try { await pc.setRemoteDescription(s.payload); } catch (e) {} }
+  } else if (s.kind === 'ice') {
+    if (pc && callId === s.callId) { try { await pc.addIceCandidate(s.payload); } catch (e) {} }
+    else pendingIce.push(s.payload);
+  } else if (s.kind === 'end' || s.kind === 'decline' || s.kind === 'busy') {
+    if (callId === s.callId) cleanupCall();
+  }
+}
+$('acceptBtn').onclick = async () => {
+  $('acceptBtn').classList.add('hidden');
+  showCall('Connecting…');
+  await setupPc(false);
+  await pc.setRemoteDescription(window._pendingOffer);
+  const ans = await pc.createAnswer(); await pc.setLocalDescription(ans);
+  await post('/api/signal', { to: callPeer.id, kind: 'answer', callId, media: callMedia, payload: ans }).catch(() => {});
+};
+async function endCall(missed) {
+  if (callPeer) await post('/api/signal', { to: callPeer.id, kind: 'end', callId, media: callMedia }).catch(() => {});
+  // Record the call in the thread (caller writes it, so it appears once).
+  if (isCaller && callPeer) {
+    const dur = callConnected && callStartedAt ? Math.round((Date.now() - callStartedAt) / 1000) : 0;
+    try {
+      const r = await post('/api/messages', { id: uuid(), to: callPeer.id, type: 'call', ts: Date.now(), callInfo: { kind: callMedia, outcome: callConnected ? 'ended' : 'missed', durationSec: dur } });
+      upsertMessage(r.message);
+    } catch (e) {}
+  }
+  cleanupCall();
+}
+function cleanupCall() {
+  clearTimeout(reconnectTimer); clearInterval(statsTimer);
+  if (pc) { try { pc.close(); } catch (e) {} pc = null; }
+  if (localStream) { localStream.getTracks().forEach(t => t.stop()); localStream = null; }
+  callPeer = null; callId = null; callConnected = false; callStartedAt = 0; speakerOn = false;
+  $('muteBtn').innerHTML = icon('mic', 25); $('muteBtn').classList.remove('off');
+  $('camBtn').innerHTML = icon('video', 26); $('camBtn').classList.remove('off');
+  $('spkBtn').classList.remove('off');
+  hideCall(); renderMessages();
+}
+$('endBtn').onclick = () => endCall(false);
+$('voiceCallBtn').onclick = () => startCall('voice');
+$('videoCallBtn').onclick = () => startCall('video');
+$('muteBtn').onclick = () => { if (!localStream) return; const t = localStream.getAudioTracks()[0]; if (t) { t.enabled = !t.enabled; $('muteBtn').classList.toggle('off', !t.enabled); $('muteBtn').innerHTML = icon(t.enabled ? 'mic' : 'micOff', 25); } };
+$('camBtn').onclick = () => { if (!localStream) return; const t = localStream.getVideoTracks()[0]; if (t) { t.enabled = !t.enabled; $('camBtn').classList.toggle('off', !t.enabled); $('camBtn').innerHTML = icon(t.enabled ? 'video' : 'videoOff', 26); $('localVideo').style.display = t.enabled ? '' : 'none'; } };
+$('spkBtn').onclick = async () => {
+  speakerOn = !speakerOn;
+  $('spkBtn').classList.toggle('off', speakerOn);
+  // Best effort: route remote audio to the loudspeaker where the browser allows it.
+  try { if ($('remoteAudio').setSinkId) await $('remoteAudio').setSinkId(speakerOn ? '' : ''); } catch (e) {}
+};
+$('flipBtn').onclick = async () => {
+  if (!pc || !localStream) return;
+  camFacing = camFacing === 'user' ? 'environment' : 'user';
+  try {
+    const fresh = await navigator.mediaDevices.getUserMedia({ video: { facingMode: camFacing } });
+    const newTrack = fresh.getVideoTracks()[0]; if (!newTrack) return;
+    const sender = pc.getSenders().find(s => s.track && s.track.kind === 'video');
+    const oldTrack = localStream.getVideoTracks()[0];
+    if (sender) await sender.replaceTrack(newTrack);
+    if (oldTrack) { localStream.removeTrack(oldTrack); oldTrack.stop(); }
+    localStream.addTrack(newTrack);
+    $('localVideo').srcObject = localStream;
+    $('localVideo').style.display = '';
+    $('camBtn').innerHTML = icon('video', 26); $('camBtn').classList.remove('off');
+  } catch (e) {}
+};
+addEventListener('online', () => { poll(); flushQueue(); });
+addEventListener('offline', () => $('netBanner').classList.remove('hidden'));
+
+boot();
+</script>
+</body>
+</html>

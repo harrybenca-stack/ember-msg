@@ -1,0 +1,1 @@
+{"dependencies":{"@neondatabase/serverless":"^0.10.4"},"description":"Separate lightweight messenger — Vercel + Neon variant (same client and API as the standalone package in ../app)","name":"messenger-vercel","private":true,"scripts":{"test":"node test/smoke.mjs"},"type":"module","version":"1.0.0"}
