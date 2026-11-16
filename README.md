@@ -25,14 +25,20 @@ Vercel deploy of the main server.
   signals, typing, uploads, sequence counters). Schema is created
   idempotently and lazily on the first request of a cold instance
   (`ensureInit`); `schema.sql` in this folder is the same schema for review.
-- `api/*.js` — one Vercel function per endpoint (see mapping below).
-- `api/uploads/[name].js` + the rewrite in `vercel.json` — serves
-  `/uploads/<uuid>.<ext>` from the `uploads` table with HTTP Range support
-  (voice-message seeking), like the standalone file server.
+- `api/[...slug].js` — the ONLY Vercel function (the Hobby plan caps a
+  deployment at 12 functions; this API has 18 endpoints). It delegates to
+  `api/_router.js`, which routes each `/api/*` path to the endpoint module
+  in `api/_handlers/` (each names its `api/_lib.js` handler) through the
+  same `adapt()` contract — paths, payloads and behaviour unchanged.
+- Uploads: the rewrite in `vercel.json` maps `/uploads/<name>` onto
+  `/api/uploads/<name>`, which the catch-all routes to the upload-file
+  handler — serves `/uploads/<uuid>.<ext>` from the `uploads` table with
+  HTTP Range support (voice-message seeking), like the standalone server.
 - `api/_config.js` — deployment config (dual-server switch, Iran endpoint,
   STUN/TURN), env-driven.
-- `test/smoke.mjs` — the standalone 42-check smoke suite re-run against the
-  handlers with an in-memory store (`test/memstore.mjs`). `npm test`.
+- `test/smoke.mjs` — the standalone 42-check smoke suite re-run with an
+  in-memory store (`test/memstore.mjs`), driving every request through the
+  real dispatcher (`api/_router.js`). `npm test`.
 
 ## Environment variables (Vercel project settings)
 
@@ -57,21 +63,25 @@ Vercel deploy of the main server.
 
 ## Endpoint mapping (standalone → Vercel)
 
-| Standalone (`app/server.js`) | Vercel function |
+Every row is served by the single function `api/[...slug].js` via
+`api/_router.js`; the third column is the endpoint module in
+`api/_handlers/` that names the `api/_lib.js` handler.
+
+| Standalone (`app/server.js`) | Endpoint module |
 | --- | --- |
-| `GET /api/ping` | `api/ping.js` |
-| `GET /api/config` | `api/config.js` |
-| `POST /api/signup` · `POST /api/login` · `POST /api/logout` | `api/signup.js` · `api/login.js` · `api/logout.js` |
-| `POST /api/sync` (stub, switch-guarded) | `api/sync.js` |
-| `GET /api/me` | `api/me.js` |
-| `GET/POST /api/contacts` | `api/contacts.js` |
-| `POST /api/messages` (UUID dedupe incl.) | `api/messages.js` |
-| `POST /api/messages/edit` · `/delete` · `/react` | `api/messages/edit.js` · `delete.js` · `react.js` |
-| `POST /api/seen` · `POST /api/typing` | `api/seen.js` · `api/typing.js` |
-| `POST /api/upload` | `api/upload.js` |
-| `GET /uploads/<name>` (Range) | `api/uploads/[name].js` via `vercel.json` rewrite |
-| `POST /api/signal` | `api/signal.js` |
-| `GET /api/poll?seq&sig` | `api/poll.js` |
+| `GET /api/ping` | `api/_handlers/ping.js` |
+| `GET /api/config` | `api/_handlers/config.js` |
+| `POST /api/signup` · `POST /api/login` · `POST /api/logout` | `api/_handlers/signup.js` · `login.js` · `logout.js` |
+| `POST /api/sync` (stub, switch-guarded) | `api/_handlers/sync.js` |
+| `GET /api/me` | `api/_handlers/me.js` |
+| `GET/POST /api/contacts` | `api/_handlers/contacts.js` |
+| `POST /api/messages` (UUID dedupe incl.) | `api/_handlers/messages.js` |
+| `POST /api/messages/edit` · `/delete` · `/react` | `api/_handlers/messages/edit.js` · `delete.js` · `react.js` |
+| `POST /api/seen` · `POST /api/typing` | `api/_handlers/seen.js` · `api/_handlers/typing.js` |
+| `POST /api/upload` | `api/_handlers/upload.js` |
+| `GET /uploads/<name>` (Range) | `api/_handlers/uploads/name.js` via `vercel.json` rewrite → `/api/uploads/<name>` |
+| `POST /api/signal` | `api/_handlers/signal.js` |
+| `GET /api/poll?seq&sig` | `api/_handlers/poll.js` |
 | Static shell (`public/`) | Vercel static hosting |
 
 State that was in-memory in the standalone (sessions, typing, signal inbox,
