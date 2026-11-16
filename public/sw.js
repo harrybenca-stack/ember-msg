@@ -1,5 +1,5 @@
 /* App-shell cache for weak networks: the page itself is cached, data is not. */
-const CACHE = 'messenger-shell-v4';
+const CACHE = 'messenger-shell-v5';
 const SHELL = ['/', '/index.html', '/manifest.json', '/icon.png'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)).then(() => self.skipWaiting())); });
 self.addEventListener('activate', e => { e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim())); });

@@ -197,7 +197,7 @@ let manifestOk = false;
 try { manifestOk = !!JSON.parse(readFileSync(path.join(publicDir, 'manifest.json'), 'utf8')).name; } catch (e) { /* bad json */ }
 check('PWA manifest serves', manifestOk);
 const sw = readFileSync(path.join(publicDir, 'sw.js'), 'utf8');
-check('service worker serves', sw.includes('messenger-shell-v4'));
+check('service worker serves', sw.includes('messenger-shell-v5'));
 check('placeholder icon serves', existsSync(path.join(publicDir, 'icon.png')) && statSync(path.join(publicDir, 'icon.png')).size > 0);
 
 const failed = results.filter((x) => !x.ok);

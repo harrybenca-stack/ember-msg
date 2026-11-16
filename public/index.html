@@ -262,7 +262,7 @@ let openPeer = null;           // user object of the open chat
 let typingMap = {};            // userId -> true (they are typing to me)
 let replyTarget = null;
 let pollTimer = null, lastActivity = Date.now();
-let appConfig = { iranServerEnabled: false, iranEndpoint: '', iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] };
+let appConfig = { iranServerEnabled: false, iranEndpoint: '', iceServers: [{ urls: 'stun:stun.l.google.com:19302' }, { urls: 'stun:stun.cloudflare.com:3478' }] };
 
 function uuid() { return (crypto.randomUUID ? crypto.randomUUID() : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => { const r = Math.random() * 16 | 0; return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16); })); }
 function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
@@ -368,7 +368,7 @@ async function poll() {
     let changed = false;
     for (const m of (r.messages || [])) { upsertMessage(m); changed = true; }
     typingMap = r.typing || {};
-    for (const s of (r.signals || [])) handleSignal(s);
+    for (const s of (r.signals || [])) { try { await handleSignal(s); } catch (e) {} }
     if (changed) { renderMessages(); }
     renderChatList(); updatePeerStatus();
     $('netBanner').classList.add('hidden');
@@ -665,9 +665,9 @@ $('recSend').onclick = () => stopRec(true);
    - brief drop -> "Reconnecting…" + ICE restart, the call does NOT end;
    - weak connection -> video steps down, then turns OFF and audio continues. */
 let pc = null, localStream = null, callPeer = null, callId = null, callMedia = 'voice';
-let callStartedAt = 0, callConnected = false, reconnectTimer = null, statsTimer = null, isCaller = false, pendingIce = [];
+let callStartedAt = 0, callConnected = false, reconnectTimer = null, statsTimer = null, isCaller = false, pendingIce = [], noAnswerTimer = null;
 let camFacing = 'user', speakerOn = false;
-const iceConfig = () => ({ iceServers: appConfig.iceServers || [{ urls: 'stun:stun.l.google.com:19302' }] });
+const iceConfig = () => ({ iceServers: appConfig.iceServers || [{ urls: 'stun:stun.l.google.com:19302' }, { urls: 'stun:stun.cloudflare.com:3478' }] });
 
 function showCall(state) { $('callView').classList.remove('hidden'); $('callState').textContent = state; }
 function hideCall() { $('callView').classList.add('hidden'); }
@@ -682,7 +682,15 @@ async function startCall(media) {
   const offer = await pc.createOffer();
   await pc.setLocalDescription(offer);
   await post('/api/signal', { to: callPeer.id, kind: 'offer', callId, media, payload: offer }).catch(() => {});
-  setTimeout(() => { if (pc && !callConnected) endCall(true); }, 60000); // no answer -> missed
+  const myCallId = callId;
+  noAnswerTimer = setTimeout(() => { if (pc && callId === myCallId && !callConnected) endCall(true); }, 60000); // no answer -> missed
+}
+/* Queued ICE candidates may only be added once a remote description exists;
+   adding them earlier throws and the candidates are lost for good. */
+async function flushPendingIce() {
+  if (!pc || !pc.remoteDescription) return;
+  const queued = pendingIce; pendingIce = [];
+  for (const c of queued) { try { await pc.addIceCandidate(c); } catch (e) {} }
 }
 async function setupPc(makeOfferSide) {
   pc = new RTCPeerConnection(iceConfig());
@@ -714,17 +722,22 @@ async function setupPc(makeOfferSide) {
       restartIce();
     }
   };
-  for (const c of pendingIce) { try { await pc.addIceCandidate(c); } catch (e) {} }
-  pendingIce = [];
 }
-async function restartIce() {
-  if (!pc || !isCaller) { if (pc) { try { pc.restartIce(); } catch (e) {} } return; }
+async function callerRestartOffer() {
   try {
     pc.restartIce();
     const offer = await pc.createOffer({ iceRestart: true });
     await pc.setLocalDescription(offer);
     await post('/api/signal', { to: callPeer.id, kind: 'offer', callId, media: callMedia, payload: offer });
   } catch (e) {}
+}
+async function restartIce() {
+  if (!pc) return;
+  if (!isCaller) { // only the caller can re-offer -> ask them to restart ICE
+    await post('/api/signal', { to: callPeer.id, kind: 'restart', callId, media: callMedia }).catch(() => {});
+    return;
+  }
+  await callerRestartOffer();
 }
 /* Adaptive quality: check the real connection every 3s. Getting worse ->
    step 1: shrink video. Still bad -> step 2: video OFF, voice keeps going. */
@@ -758,21 +771,25 @@ async function handleSignal(s) {
     if (pc && callId !== s.callId) { await post('/api/signal', { to: s.from, kind: 'busy', callId: s.callId }).catch(() => {}); return; }
     if (pc && callId === s.callId) { // ICE-restart re-offer on the live call
       await pc.setRemoteDescription(s.payload);
+      await flushPendingIce();
       const ans = await pc.createAnswer(); await pc.setLocalDescription(ans);
       await post('/api/signal', { to: s.from, kind: 'answer', callId, media: callMedia, payload: ans }).catch(() => {});
       return;
     }
     const fromUser = contacts.find(c => c.id === s.from) || { id: s.from, username: 'Someone' };
-    callPeer = fromUser; callMedia = s.media; callId = s.callId; isCaller = false; callConnected = false;
+    callPeer = fromUser; callMedia = s.media; callId = s.callId; isCaller = false; callConnected = false; pendingIce = [];
     window._pendingOffer = s.payload;
     $('callName').textContent = fromUser.username;
     $('acceptBtn').classList.remove('hidden');
     showCall((s.media === 'video' ? 'Incoming video call…' : 'Incoming voice call…'));
   } else if (s.kind === 'answer') {
-    if (pc && callId === s.callId) { try { await pc.setRemoteDescription(s.payload); } catch (e) {} }
+    if (pc && callId === s.callId) { try { await pc.setRemoteDescription(s.payload); await flushPendingIce(); } catch (e) {} }
   } else if (s.kind === 'ice') {
-    if (pc && callId === s.callId) { try { await pc.addIceCandidate(s.payload); } catch (e) {} }
+    // No remote description yet -> queue; adding now would throw and lose it.
+    if (pc && pc.remoteDescription && callId === s.callId) { try { await pc.addIceCandidate(s.payload); } catch (e) {} }
     else pendingIce.push(s.payload);
+  } else if (s.kind === 'restart') {
+    if (pc && isCaller && callId === s.callId) await callerRestartOffer();
   } else if (s.kind === 'end' || s.kind === 'decline' || s.kind === 'busy') {
     if (callId === s.callId) cleanupCall();
   }
@@ -780,10 +797,18 @@ async function handleSignal(s) {
 $('acceptBtn').onclick = async () => {
   $('acceptBtn').classList.add('hidden');
   showCall('Connecting…');
-  await setupPc(false);
-  await pc.setRemoteDescription(window._pendingOffer);
-  const ans = await pc.createAnswer(); await pc.setLocalDescription(ans);
-  await post('/api/signal', { to: callPeer.id, kind: 'answer', callId, media: callMedia, payload: ans }).catch(() => {});
+  try {
+    await setupPc(false);
+    await pc.setRemoteDescription(window._pendingOffer);
+    await flushPendingIce();
+    const ans = await pc.createAnswer(); await pc.setLocalDescription(ans);
+    await post('/api/signal', { to: callPeer.id, kind: 'answer', callId, media: callMedia, payload: ans }).catch(() => {});
+  } catch (e) {
+    // Answering failed (e.g. mic/camera hiccup): keep the pending offer and
+    // let the user tap Accept again instead of silently losing the call.
+    $('acceptBtn').classList.remove('hidden');
+    showCall('Could not answer — tap to try again');
+  }
 };
 async function endCall(missed) {
   if (callPeer) await post('/api/signal', { to: callPeer.id, kind: 'end', callId, media: callMedia }).catch(() => {});
@@ -798,7 +823,8 @@ async function endCall(missed) {
   cleanupCall();
 }
 function cleanupCall() {
-  clearTimeout(reconnectTimer); clearInterval(statsTimer);
+  clearTimeout(reconnectTimer); clearTimeout(noAnswerTimer); clearInterval(statsTimer);
+  pendingIce = [];
   if (pc) { try { pc.close(); } catch (e) {} pc = null; }
   if (localStream) { localStream.getTracks().forEach(t => t.stop()); localStream = null; }
   callPeer = null; callId = null; callConnected = false; callStartedAt = 0; speakerOn = false;
