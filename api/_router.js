@@ -1,7 +1,8 @@
 // API router — the whole messenger API is served by ONE Vercel Serverless
 // Function (the Hobby plan allows at most 12 functions per deployment, and
-// this API has 18 endpoints). api/[...slug].js is the only function file;
-// it delegates here.
+// this API has 18 endpoints). api/dispatch.js is the only function file;
+// vercel.json rewrites every /api/* and /uploads/* request onto it, and it
+// delegates here.
 //
 // Routing is by exact request path to the same handlers the per-endpoint
 // function files used before (the handlers live in api/_lib.js and are
@@ -49,17 +50,30 @@ const ROUTES = new Map([
   ['/api/poll', poll],
 ]);
 
-// Resolve the request path the way Vercel presents it to a catch-all
-// function: req.query.slug holds the path segments after /api/, and
-// req.url holds the (possibly rewritten) path. Prefer slug; fall back
-// to parsing the URL (the smoke test drives this router with both set,
-// mirroring the live function).
+// Resolve the request path the way Vercel presents it after the
+// vercel.json rewrites: the dispatch function is invoked as
+// /api/dispatch?path=<segments after /api/>, so req.query.path holds the
+// original path — "messages/edit" for /api/messages/edit, and
+// "uploads/<name>" for the public /uploads/<name> (the uploads rewrite
+// folds its prefix into the same parameter). The dot in an upload's
+// filename survives: it is an ordinary character in a query value.
+// Prefer `path`; fall back to a catch-all style req.query.slug, then to
+// parsing req.url (the smoke test drives this router with the rewritten
+// shape, mirroring the live function).
+function decodeSeg(s) {
+  try { return decodeURIComponent(String(s)); } catch (e) { return String(s); }
+}
 function requestPath(req) {
-  const slug = req.query && req.query.slug;
+  const query = req.query || {};
+  const p = query.path;
+  if (p !== undefined && p !== null && p !== '') {
+    const raw = Array.isArray(p) ? p.join('/') : String(p);
+    const parts = raw.split('/').filter(Boolean).map(decodeSeg);
+    if (parts.length) return '/api/' + parts.join('/');
+  }
+  const slug = query.slug;
   if (slug !== undefined && slug !== null && slug !== '') {
-    const parts = (Array.isArray(slug) ? slug : [slug]).map((s) => {
-      try { return decodeURIComponent(String(s)); } catch (e) { return String(s); }
-    });
+    const parts = (Array.isArray(slug) ? slug : [slug]).map(decodeSeg);
     return '/api/' + parts.join('/');
   }
   try {
@@ -73,7 +87,8 @@ export function resolveHandler(req) {
   let pathname = requestPath(req);
   if (pathname.length > 1 && pathname.endsWith('/')) pathname = pathname.slice(0, -1);
   // Uploaded files: /api/uploads/<name>. The vercel.json rewrite maps the
-  // public /uploads/<name> onto this path, so it lands in the catch-all.
+  // public /uploads/<name> onto the dispatch function with
+  // path=uploads/<name>, which requestPath() reconstructs to this path.
   // handleUploadFile reads req.query.name — set it here, exactly as the
   // old api/uploads/[name].js function received it from Vercel.
   const up = /^\/api\/uploads\/(.+)$/.exec(pathname);

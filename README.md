@@ -25,15 +25,21 @@ Vercel deploy of the main server.
   signals, typing, uploads, sequence counters). Schema is created
   idempotently and lazily on the first request of a cold instance
   (`ensureInit`); `schema.sql` in this folder is the same schema for review.
-- `api/[...slug].js` — the ONLY Vercel function (the Hobby plan caps a
-  deployment at 12 functions; this API has 18 endpoints). It delegates to
-  `api/_router.js`, which routes each `/api/*` path to the endpoint module
-  in `api/_handlers/` (each names its `api/_lib.js` handler) through the
+- `api/dispatch.js` — the ONLY Vercel function (the Hobby plan caps a
+  deployment at 12 functions; this API has 18 endpoints). The rewrites in
+  `vercel.json` send every `/api/*` request to it as
+  `/api/dispatch?path=<segments after /api/>`; it delegates to
+  `api/_router.js`, which routes each path to the endpoint module in
+  `api/_handlers/` (each names its `api/_lib.js` handler) through the
   same `adapt()` contract — paths, payloads and behaviour unchanged.
-- Uploads: the rewrite in `vercel.json` maps `/uploads/<name>` onto
-  `/api/uploads/<name>`, which the catch-all routes to the upload-file
-  handler — serves `/uploads/<uuid>.<ext>` from the `uploads` table with
-  HTTP Range support (voice-message seeking), like the standalone server.
+  (A catch-all function file was tried first, but on this deployment it
+  only matched single-segment paths, so multi-segment routes like
+  `/api/messages/edit` never reached the function — hence rewrites.)
+- Uploads: the rewrite in `vercel.json` maps `/uploads/<name>` onto the
+  dispatch function as `path=uploads/<name>`, which the router routes to
+  the upload-file handler — serves `/uploads/<uuid>.<ext>` from the
+  `uploads` table with HTTP Range support (voice-message seeking), like
+  the standalone server.
 - `api/_config.js` — deployment config (dual-server switch, Iran endpoint,
   STUN/TURN), env-driven.
 - `test/smoke.mjs` — the standalone 42-check smoke suite re-run with an
@@ -63,7 +69,7 @@ Vercel deploy of the main server.
 
 ## Endpoint mapping (standalone → Vercel)
 
-Every row is served by the single function `api/[...slug].js` via
+Every row is served by the single function `api/dispatch.js` via
 `api/_router.js`; the third column is the endpoint module in
 `api/_handlers/` that names the `api/_lib.js` handler.
 

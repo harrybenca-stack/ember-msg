@@ -1,11 +1,12 @@
 // Smoke test — the same 42 checks as the standalone app's smoke-test.js,
 // re-run against the Vercel variant WITH the in-memory store
 // (test/memstore.mjs) standing in for Neon. Every API request goes through
-// the real dispatcher (api/_router.js behind api/[...slug].js — the single
-// Serverless Function the live site uses), with fake req/res presented the
-// way Vercel presents them to the catch-all: req.url is the request path
-// and req.query carries the query params plus the catch-all `slug`
-// segments. Run: npm test
+// the real dispatcher (api/_router.js behind api/dispatch.js — the single
+// Serverless Function the live site uses), with fake req/res presented
+// exactly the way Vercel presents them after the vercel.json rewrites:
+// req.url is /api/dispatch?path=<segments after /api/> (plus the client's
+// own query params, which Vercel merges into the rewritten URL) and
+// req.query carries those params plus `path`. Run: npm test
 import { readFileSync, existsSync, statSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
@@ -37,16 +38,23 @@ function fakeRes() {
 }
 
 // One raw request through the dispatcher, returned in the { status, json,
-// headers, buffer } shape the checks below consume.
+// headers, buffer } shape the checks below consume. `pathname` is the
+// PUBLIC path the client requests; it is translated into the rewritten
+// invocation the live function receives — /api/<rest> becomes
+// path=<rest>, and /uploads/<name> becomes path=uploads/<name> — exactly
+// as the two vercel.json rewrites present it to api/dispatch.js.
 async function callApi(pathname, method, body, query, headers) {
-  const qs = query && Object.keys(query).length ? '?' + new URLSearchParams(query).toString() : '';
-  const slug = pathname.replace(/^\/api\/?/, '').split('/').filter(Boolean);
+  let rel;
+  if (pathname.startsWith('/api/')) rel = pathname.slice('/api/'.length);
+  else if (pathname.startsWith('/uploads/')) rel = pathname.slice(1);
+  else rel = pathname.replace(/^\//, '');
+  const qs = query && Object.keys(query).length ? '&' + new URLSearchParams(query).toString() : '';
   const req = {
     method,
-    url: pathname + qs,
+    url: '/api/dispatch?path=' + rel + qs,
     headers: headers || {},
     body: body || {},
-    query: Object.assign({}, query || {}, { slug }),
+    query: Object.assign({}, query || {}, { path: rel }),
   };
   const res = fakeRes();
   await api(req, res);
@@ -131,17 +139,17 @@ await A.call('/api/typing', 'POST', { to: bobId, typing: true });
 r = await B.call('/api/poll', 'GET', null, { seq: '0', sig: '0' });
 check('typing indicator reaches bob', r.json.typing[aliceId] === true);
 
-// uploads: voice (fake webm bytes) + photo (1x1 png). File fetches go to
-// /api/uploads/<name> — the path the vercel.json rewrite sends the public
-// /uploads/<name> to, i.e. what the live catch-all function receives.
+// uploads: voice (fake webm bytes) + photo (1x1 png). File fetches use
+// the public /uploads/<name> path — the vercel.json rewrite turns it into
+// the dispatch invocation path=uploads/<name>, which callApi reproduces.
 const voiceBytes = Buffer.from([0x1a, 0x45, 0xdf, 0xa3, 1, 2, 3, 4]);
 const voiceB64 = voiceBytes.toString('base64');
 r = await A.call('/api/upload', 'POST', { kind: 'voice', mime: 'audio/webm', data: voiceB64 });
 check('voice upload', r.status === 201 && r.json.url.startsWith('/uploads/'));
 const voiceName = r.json.url.split('/').pop();
-let fr = await callApi('/api/uploads/' + voiceName, 'GET', null, null, {});
+let fr = await callApi('/uploads/' + voiceName, 'GET', null, null, {});
 check('voice file served', fr.status === 200 && Buffer.compare(fr.buffer, voiceBytes) === 0);
-fr = await callApi('/api/uploads/' + voiceName, 'GET', null, null, { range: 'bytes=0-3' });
+fr = await callApi('/uploads/' + voiceName, 'GET', null, null, { range: 'bytes=0-3' });
 check('voice file supports Range (seek)', fr.status === 206 && fr.buffer.length === 4 && String(fr.headers['Content-Range']).startsWith('bytes 0-3/'));
 r = await A.call('/api/messages', 'POST', { to: bobId, type: 'voice', media: '/uploads/' + voiceName, ts: Date.now() });
 check('voice message sent', r.status === 201 && r.json.message.type === 'voice');
